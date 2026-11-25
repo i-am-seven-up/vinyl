@@ -26,6 +26,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -48,7 +53,7 @@ import com.vinyl.shared.database.AlbumSummary
 import com.vinyl.shared.ui.VinylTheme
 
 @Composable
-internal fun AlbumsRoute(viewModelFactory: ViewModelProvider.Factory) {
+internal fun AlbumsRoute(viewModelFactory: ViewModelProvider.Factory, onPlaySongs: (List<com.vinyl.shared.database.Song>, Int) -> Unit, canPlay: Boolean, onPlayNext: (com.vinyl.shared.database.Song) -> Unit, onAddToQueue: (com.vinyl.shared.database.Song) -> Unit) {
     val viewModel: AlbumsViewModel = viewModel(factory = viewModelFactory)
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -70,6 +75,10 @@ internal fun AlbumsRoute(viewModelFactory: ViewModelProvider.Factory) {
         onScan = viewModel::scanLibrary,
         onAlbumClick = viewModel::onAlbumClick,
         onAlbumsClick = viewModel::onAlbumsClick,
+        onPlaySongs = onPlaySongs,
+        canPlay = canPlay,
+        onPlayNext = onPlayNext,
+        onAddToQueue = onAddToQueue,
     )
 }
 
@@ -81,6 +90,10 @@ internal fun AlbumsScreen(
     onScan: () -> Unit = {},
     onAlbumClick: (String) -> Unit = {},
     onAlbumsClick: () -> Unit = {},
+    onPlaySongs: (List<com.vinyl.shared.database.Song>, Int) -> Unit = { _, _ -> },
+    canPlay: Boolean = false,
+    onPlayNext: (com.vinyl.shared.database.Song) -> Unit = {},
+    onAddToQueue: (com.vinyl.shared.database.Song) -> Unit = {},
 ) {
     val selectedAlbum = uiState.albums.find { it.albumId == uiState.selectedAlbumId }
     Column(
@@ -130,9 +143,19 @@ internal fun AlbumsScreen(
                         item { Text(stringResource(R.string.library_album_empty)) }
                     }
                     items(uiState.songs, key = { it.contentUri }) { song ->
-                        Column {
-                            Text(song.title, style = MaterialTheme.typography.titleMedium)
-                            Text("${song.artist} · ${formatDuration(song.durationMs)}")
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Column(Modifier.weight(1f).clickable(enabled = canPlay) { onPlaySongs(uiState.songs, uiState.songs.indexOf(song)) }.padding(vertical = 8.dp)) {
+                                Text(song.title, style = MaterialTheme.typography.titleMedium)
+                                Text("${song.artist} · ${formatDuration(song.durationMs)}")
+                            }
+                            var menuExpanded by remember { mutableStateOf(false) }
+                            Box {
+                                TextButton(onClick = { menuExpanded = true }, enabled = canPlay) { Text(stringResource(R.string.queue_actions)) }
+                                DropdownMenu(expanded = menuExpanded, onDismissRequest = { menuExpanded = false }) {
+                                    DropdownMenuItem(text = { Text(stringResource(R.string.queue_play_next)) }, onClick = { menuExpanded = false; onPlayNext(song) })
+                                    DropdownMenuItem(text = { Text(stringResource(R.string.queue_add)) }, onClick = { menuExpanded = false; onAddToQueue(song) })
+                                }
+                            }
                         }
                     }
                 }

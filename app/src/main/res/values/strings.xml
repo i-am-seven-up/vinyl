@@ -19,4 +19,14 @@
     </plurals>
     <string name="playlists_scaffold_notice">Đang xây dựng · Quản lý playlist sẽ có ở B4.</string>
     <string name="settings_scaffold_notice">Đang xây dựng · Theme hiện theo hệ thống. Tùy chọn theme và quét lại sẽ có ở B5.</string>
+    <string name="queue_title">Hàng đợi</string>
+    <string name="queue_empty">Hàng đợi trống. Thêm bài từ thư viện.</string>
+    <string name="queue_current">Đang phát</string>
+    <string name="queue_remove">Xóa</string>
+    <string name="queue_remove_song">Xóa %1$s khỏi hàng đợi</string>
+    <string name="queue_back">Quay lại</string>
+    <string name="queue_actions">Tùy chọn</string>
+    <string name="queue_play_next">Phát tiếp theo</string>
+    <string name="queue_add">Thêm vào hàng đợi</string>
+    <string name="queue_order">Thứ tự danh sách; khi bật ngẫu nhiên, thứ tự phát có thể khác.</string>
 </resources>

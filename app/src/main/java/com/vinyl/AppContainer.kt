@@ -24,6 +24,10 @@ internal class AppContainer(context: Context) {
         }
         .build()
 
+    private val playerController = com.vinyl.player.PlayerController(context)
+    val nowPlayingViewModelFactory = viewModelFactory {
+        initializer { com.vinyl.player.NowPlayingViewModel(playerController) }
+    }
     val albumsViewModelFactory = viewModelFactory {
         initializer { AlbumsViewModel(libraryRepository, createSavedStateHandle()) }
     }
