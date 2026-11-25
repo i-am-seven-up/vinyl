@@ -5,7 +5,7 @@ Trạng thái: B0 đã có code, xem `docs/b0/README.md` để biết phạm vi 
 ## 1. Các quyết định chung
 
 - Một module `:app`, Kotlin + Compose + Material 3, package theo tính năng.
-- Giữ Gradle 8.13, AGP 8.13.2, Kotlin 2.2.21 và Compose BOM hiện tại. Gradle dùng JDK 17 hoặc 21; bytecode target 17. Không nâng version chỉ vì có bản mới.
+- Giữ Gradle 8.13, AGP 8.13.2, Kotlin 2.2.21 và Compose BOM hiện tại. Gradle Daemon dùng JetBrains JDK 21, ghim bằng `gradle/gradle-daemon-jvm.properties`; bytecode target 17. Wrapper khởi chạy bằng JDK 17 hoặc 21. Không nâng version chỉ vì có bản mới.
 - `minSdk 26`, `compileSdk 36`, `targetSdk 35` như project hiện tại.
 - Luồng chính: Screen → ViewModel → Repository → Room / MediaStore. Repository chỉ giữ logic dữ liệu thực sự cần dùng chung; Settings đơn giản có thể dùng DataStore trực tiếp từ ViewModel. Player có service riêng.
 - Đề xuất thay Hilt trong PLANNING.md bằng DI thủ công: `VinylApplication` giữ một `AppContainer`, tạo database/repository dùng chung; ViewModel nhận dependency qua constructor và factory chuẩn của AndroidX. Không tạo dependency trong Composable.
@@ -186,7 +186,7 @@ Tách thao tác đọc và thao tác thay đổi dữ liệu. Tên hàm phải n
 - Tách Theme, AppNavHost và màn Library khỏi MainActivity. Thêm ViewModel/lifecycle/navigation.
 - Tạo VinylApplication/AppContainer, navigation Library → Playlists → Settings; màn đang xây phải ghi rõ trạng thái.
 - Hiển thị Loading/Empty/Error trực tiếp trong màn mẫu và có Preview sáng/tối; chỉ tách component chung khi nhiều màn dùng lại.
-- Sửa README: đường dẫn mới, JDK 17/21, SDK 36, lệnh build và chạy emulator.
+- Sửa README: đường dẫn local, Gradle Daemon JetBrains JDK 21, SDK 36, lệnh build và chạy emulator.
 
 Đạt khi: clone → sync → Run; điều hướng và Preview chạy, không cần tài khoản/API key. Khánh bắt đầu theme/component trong lúc Quý làm B1.
 
@@ -247,7 +247,7 @@ Tách thao tác đọc và thao tác thay đổi dữ liệu. Tên hàm phải n
 - Chỉ poll position khi UI player đang hiển thị; service không chạy vòng lặp cập nhật UI liên tục.
 - Thử thư viện khoảng 3.000 bài, quan sát scroll/scan và bộ nhớ bằng profiler; nếu có chậm mới tối ưu chỗ đo được.
 - Mỗi lát chạy assembleDebug, unit test liên quan và lintDebug; playback/permission cần emulator API 32 + 36 và kiểm tra máy thật khi có.
-- CI dùng wrapper + JDK 17, chạy assembleDebug/testDebugUnitTest/lintDebug khi PR. Không cần CI emulator trong lần scaffold đầu.
+- CI dùng wrapper + JetBrains JDK 21 theo tiêu chí daemon trong repo, chạy assembleDebug/testDebugUnitTest/lintDebug khi PR. Không cần CI emulator trong lần scaffold đầu.
 
 ## 7. Cách bàn giao
 

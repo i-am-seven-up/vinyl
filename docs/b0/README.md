@@ -31,7 +31,9 @@ Tuân thủ mục 4 của [plan](../MVP_SCAFFOLD_PLAN.md): query chỉ đọc, c
 
 ## Chạy thử
 
-1. Mở project, chọn Gradle JDK 17/21 và SDK 36 theo README gốc, Run trên emulator.
+Thành viên mới làm theo [Setup Vinyl](../SETUP.md) trước khi chạy các bước dưới đây.
+
+1. Mở project, dùng Gradle Daemon JetBrains JDK 21 được ghim trong repo và SDK 36 theo README gốc, Run trên emulator. Máy chưa có JDK phù hợp cần Internet để Gradle tải tự động.
 2. Mặc định thấy Thư viện và thông báo B0; chuyển Playlist/Cài đặt, chọn lại tab và bấm Back.
 3. Đổi dark theme trong Android Settings; kiểm tra chữ/nền và tab. Xoay màn hình khi đang ở Cài đặt; tab hiện tại phải được giữ lại.
 4. Mở `AlbumsScreen.kt` → Split/Design để xem bốn Preview. Loading/Error dùng UiState truyền trực tiếp trong Preview, không phải thao tác scan thật.
@@ -45,7 +47,7 @@ Khánh có thể làm theme/layout/component và Preview ngay. Quý bắt đầu
 
 ## Kết quả kiểm tra
 
-- `:app:assembleDebug`: thành công với JDK 17.
+- `:app:assembleDebug`: thành công với Gradle Daemon JetBrains JDK 21; wrapper khởi chạy bằng JDK 17 vẫn chọn đúng daemon theo cấu hình repo.
 - `:app:lintDebug`: thành công, không có error; còn 6 warning về SDK/version đã ghim và launcher icon chưa có.
 - `:app:testDebugUnitTest`: `NO-SOURCE`; B0 chưa có logic nghiệp vụ để thêm unit test.
 - Emulator API 36: cài/mở APK, ba tab, chọn lại tab rồi Back, giữ tab khi xoay, đổi theme sáng/tối đều đạt. Đã xem ảnh chụp hai theme, không bị che bởi system bar.
