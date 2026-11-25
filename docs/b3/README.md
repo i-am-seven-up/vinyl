@@ -1,5 +1,7 @@
 # B3 — Fade, lịch sử nghe và resume
 
+PR: [#4 — B3 playback engine](https://github.com/i-am-seven-up/vinyl/pull/4) → `main`.
+
 Ngày bàn giao: 26/11/2026. Branch: `codex/b3-playback-engine`, từ `origin/main` sau PR #3/B2 đã merge.
 
 ## Đã triển khai
