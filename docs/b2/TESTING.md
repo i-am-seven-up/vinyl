@@ -10,6 +10,8 @@ Ngày: 26/11/2026. Toolchain giữ nguyên kế hoạch.
 | connectedDebugAndroidTest API 36 | PASS — 10 test (8 B1 + 2 B2) |
 | git diff --check | PASS |
 
+Cập nhật MVP Queue: build/unit/lint và 10 instrumentation test API 36 PASS. Test mở rộng kiểm tra snapshot queue, chọn occurrence trùng và xóa occurrence trước/current không nhầm bài. UI walkthrough: album menu → thêm vào queue rỗng → NowPlaying → Queue → chọn phát → xóa bài cuối → empty, mini player ẩn. Ảnh: [Queue](screenshots/api36-queue.png), [Empty](screenshots/api36-queue-empty.png).
+
 B2 instrumentation: queue thêm cuối/chèn next/xóa occurrence, repeat/shuffle và reconnect giữ session; file WAV tổng hợp thật giải mã/phát tăng position, pause, seek và tự chuyển bài. WAV do test tạo trong filesDir, tự dọn sau test. Test queue dùng URI giả chỉ để kiểm tra queue; không dùng nó làm bằng chứng decoder.
 
 Smoke API 36: thư viện B1 3 album/6 bài; chọn Đường về 1 → mini player và NowPlaying thật. Session PLAYING, foreground service `mediaPlayback`, notification transport có 3 action. Home và khóa màn hình: position tăng từ khoảng 15s lên 27s. Media button hệ thống pause trả PAUSED, play tiếp được. Mở lại activity vẫn session hiện có. Ảnh NowPlaying đã kiểm tra bố cục.

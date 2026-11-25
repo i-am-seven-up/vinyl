@@ -29,9 +29,11 @@ internal fun NowPlayingScreen(
     onRepeat: (Int) -> Unit,
     onShuffle: (Boolean) -> Unit,
     onBack: () -> Unit,
+    onQueue: () -> Unit = {},
 ) {
     Column(Modifier.fillMaxSize().padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         TextButton(onClick = onBack) { Text("Back") }
+        TextButton(onClick = onQueue) { Text(androidx.compose.ui.res.stringResource(com.vinyl.R.string.queue_title)) }
         Text("Now playing", style = MaterialTheme.typography.headlineLarge)
         Text(state.title, style = MaterialTheme.typography.titleLarge)
         Text(state.artist)

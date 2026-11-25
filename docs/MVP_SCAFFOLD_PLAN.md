@@ -71,6 +71,7 @@ com.vinyl/
     NowPlayingViewModel.kt
     NowPlayingScreen.kt
     MiniPlayer.kt
+    QueueScreen.kt        # MVP dùng chung NowPlayingViewModel
   playlist/
     PlaylistsViewModel.kt
     PlaylistsScreen.kt
@@ -209,9 +210,10 @@ Tách thao tác đọc và thao tác thay đổi dữ liệu. Tên hàm phải n
 - API rõ ràng: playSongs, playPause, next, previous, seekTo, playNext, addToQueue, removeFromQueue. Dùng media ID ổn định, đồng bộ UI bằng listener.
 - Thêm foreground service/media playback permissions và khai báo service theo tài liệu Media3. Chỉ xin POST_NOTIFICATIONS khi luồng thông báo thực tế cần quyền này; không chặn playback chỉ vì người dùng từ chối notification.
 - Audio focus và xử lý rút tai nghe dùng cấu hình Media3. Release controller/session/player đúng lifecycle.
-- Mini player thật + NowPlaying thô có seek/next/previous; Khánh mở rộng UI và Queue từ đây.
+- Quý triển khai mini player thật + NowPlaying thô có seek/next/previous và MVP Queue UI ngay trong B2/L2. Queue mở từ NowPlaying, hiện danh sách/đánh dấu bài hiện tại, chọn bài để phát và xóa từng occurrence. Album detail có menu Phát tiếp theo/Thêm vào hàng đợi. Có empty/error và Preview; chưa kéo thả sắp xếp.
+- Khánh cải thiện UI/UX của Queue, NowPlaying và mini player trên base chạy thật này; không phải đợi B5 mới có Queue UI.
 
-Đạt khi: phát được nhạc thật, khóa màn hình vẫn nghe, notification/tai nghe điều khiển được, vào lại màn hình không tạo player thứ hai. Test gapless bằng file/codec phù hợp, không giả định mọi file đều gapless.
+Đạt khi: phát được nhạc thật, khóa màn hình vẫn nghe, notification/tai nghe điều khiển được, vào lại màn hình không tạo player thứ hai. Queue UI thao tác được, bài trùng vẫn chọn/xóa đúng occurrence, xóa hết hiện empty. Test gapless bằng file/codec phù hợp, không giả định mọi file đều gapless.
 
 ### B3 — Hoàn thiện engine MVP: fade, lịch sử, resume
 
@@ -235,7 +237,7 @@ Tách thao tác đọc và thao tác thay đổi dữ liệu. Tên hàm phải n
 
 - Search dùng Room LIKE trên cột bỏ dấu, debounce khoảng 300ms; tham số query có binding, thống nhất xử lý ký tự % và _ như chữ tìm kiếm khi cần.
 - DataStore lưu theme; Settings có rescan và feedback đang scan/lỗi. Palette xử lý theo bìa, không tính lại mỗi lần recomposition.
-- Khánh hoàn thiện Songs/Artists, sort, Queue, NowPlaying và onboarding theo API đã bàn giao. Quý hỗ trợ engine và review pattern.
+- Khánh hoàn thiện Songs/Artists, sort và onboarding; cải thiện Queue/NowPlaying từ MVP UI đã có ở B2 theo API đã bàn giao. Quý hỗ trợ engine và review pattern.
 - Chạy một luồng xuyên suốt: cấp quyền → scan → chọn album → phát nền → thêm playlist → tìm kiếm → mở lại app.
 
 Đạt khi: teammate tự clone/run bằng README và nhạc test, không cần Quý sửa cấu hình trên máy teammate.

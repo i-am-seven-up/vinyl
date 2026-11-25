@@ -34,10 +34,20 @@ internal class PlayerControllerDeviceTest {
             await { controller.uiState.value.title == "Song 2" }
             onMain { controller.removeFromQueue(1) }
             await { controller.uiState.value.title == "Song 3" }
+            onMain { controller.addToQueue(songs[0]) }
+            await { controller.uiState.value.queue.size == 3 }
+            onMain { controller.playQueueItem(2) }
+            await { controller.uiState.value.currentIndex == 2 }
+            assertEquals("Song 1", controller.uiState.value.queue[2].mediaMetadata.title)
+            onMain { controller.removeFromQueue(0) }
+            await { controller.uiState.value.queue.size == 2 && controller.uiState.value.currentIndex == 1 && controller.uiState.value.title == "Song 1" }
+            assertEquals("Song 1", controller.uiState.value.title)
+            onMain { controller.removeFromQueue(1) }
+            await { controller.uiState.value.title == "Song 3" }
             onMain { controller.disconnect(); controller.connect() }
             await { controller.uiState.value.isConnected && controller.uiState.value.title == "Song 3" }
             assertEquals(Player.REPEAT_MODE_ALL, controller.uiState.value.repeatMode)
-            onMain { controller.removeFromQueue(1); controller.removeFromQueue(0) }
+            onMain { repeat(controller.uiState.value.queue.size) { controller.removeFromQueue(0) } }
             await { !controller.uiState.value.hasMedia }
         } finally { onMain { controller.disconnect() } }
     }

@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.Column
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.vinyl.player.QueueScreen
 import com.vinyl.player.MiniPlayer
 import com.vinyl.player.NowPlayingScreen
 import com.vinyl.player.NowPlayingViewModel
@@ -72,10 +73,13 @@ internal fun AppNavHost(albumsViewModelFactory: ViewModelProvider.Factory, nowPl
             modifier = Modifier.padding(contentPadding),
         ) {
             composable(AppDestination.LIBRARY.route) {
-                AlbumsRoute(albumsViewModelFactory, player::playSongs, playback.isConnected)
+                AlbumsRoute(albumsViewModelFactory, player::playSongs, playback.isConnected, player::playNext, player::addToQueue)
+            }
+            composable("queue") {
+                QueueScreen(playback, player::playQueueItem, player::removeFromQueue, { navController.popBackStack() })
             }
             composable("nowPlaying") {
-                NowPlayingScreen(playback, player::playPause, player::next, player::previous, player::seekTo, player::setRepeatMode, player::setShuffle, { navController.popBackStack() })
+                NowPlayingScreen(playback, player::playPause, player::next, player::previous, player::seekTo, player::setRepeatMode, player::setShuffle, { navController.popBackStack() }, { navController.navigate("queue") { launchSingleTop = true } })
             }
             composable(AppDestination.PLAYLISTS.route) { PlaylistsScreen() }
             composable(AppDestination.SETTINGS.route) { SettingsScreen() }

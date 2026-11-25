@@ -13,21 +13,6 @@ import com.vinyl.shared.database.Song
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-internal data class PlaybackUiState(
-    val isConnected: Boolean = false,
-    val title: String = "",
-    val artist: String = "",
-    val hasMedia: Boolean = false,
-    val isPlaying: Boolean = false,
-    val positionMs: Long = 0,
-    val durationMs: Long = 0,
-    val canNext: Boolean = false,
-    val canPrevious: Boolean = false,
-    val repeatMode: Int = Player.REPEAT_MODE_OFF,
-    val isShuffling: Boolean = false,
-    val errorMessage: String? = null,
-)
-
 // Used on the main thread, like MediaController itself. The service outlives this connection.
 internal class PlayerController(context: Context) {
     private val appContext = context.applicationContext
@@ -96,6 +81,13 @@ internal class PlayerController(context: Context) {
         player.addMediaItem(if (player.mediaItemCount == 0) 0 else player.currentMediaItemIndex + 1, song.toMediaItem())
     }
     fun addToQueue(song: Song) { requireController().addMediaItem(song.toMediaItem()) }
+    fun playQueueItem(index: Int) {
+        val player = requireController()
+        require(index in 0 until player.mediaItemCount) { "Invalid queue index" }
+        player.seekToDefaultPosition(index)
+        player.prepare()
+        player.play()
+    }
     fun removeFromQueue(index: Int) {
         val player = requireController()
         require(index in 0 until player.mediaItemCount) { "Invalid queue index" }
@@ -117,6 +109,8 @@ internal class PlayerController(context: Context) {
     private fun updateState() {
         val player = controller ?: return
         mutableState.value = PlaybackUiState(
+            queue = List(player.mediaItemCount) { player.getMediaItemAt(it) },
+            currentIndex = player.currentMediaItemIndex,
             isConnected = true,
             title = player.mediaMetadata.title?.toString().orEmpty(),
             artist = player.mediaMetadata.artist?.toString().orEmpty(),
