@@ -1,23 +1,35 @@
 # Vinyl
 
-Android app nghe nhạc offline, viết bằng Kotlin và Jetpack Compose. Đây là project khởi đầu chạy được để bắt đầu lát L1 trong `PLANNING.md`.
+App nghe nhạc offline, Kotlin + Jetpack Compose. Hiện đã có khung B0: ba tab, theme theo hệ thống và mẫu màn hình có ViewModel. Chưa quét hoặc phát nhạc.
 
 ## Mở và chạy
 
-1. Cài [Android Studio Narwhal 4 Feature Drop (2025.1.4) hoặc mới hơn](https://developer.android.com/studio/releases), Android SDK Platform 36 và một emulator Android API 26 trở lên.
-2. Clone repo, mở **thư mục gốc `Vinyl`** trong Android Studio. Chọn **Gradle JDK 17 hoặc 21 (không chọn JDK 25 với Gradle 8.13)** khi Studio hỏi Gradle JDK, rồi chờ Gradle sync.
-3. Trong Device Manager, tạo/chọn emulator; chọn cấu hình `app` và bấm **Run**. Màn hình hiện chữ **Vinyl** là startup thành công.
+Hướng dẫn thống nhất cho mọi thành viên: [Setup Vinyl](docs/SETUP.md).
 
-Trên terminal Windows, có thể chạy `./gradlew.bat :app:assembleDebug` (PowerShell: `.\gradlew.bat :app:assembleDebug`). Gradle wrapper tải bản Gradle đã ghim; lần sync đầu cần Internet. Không commit `local.properties` vì SDK path khác nhau trên từng máy.
+1. Clone repo và mở thư mục gốc trong Android Studio Narwhal 4 (2025.1.4) hoặc mới hơn; Rabbit 2 dùng được.
+2. Gradle Daemon dùng chung **JetBrains JDK 21**, được ghim trong `gradle/gradle-daemon-jvm.properties`. Android Studio và terminal dùng cùng tiêu chí này; Gradle tự tìm JDK phù hợp hoặc tải từ URL đã lưu nếu máy chưa có. Lần đầu cần Internet; không cần cùng đường dẫn cài JDK giữa các máy.
+3. Cài Android SDK Platform 36 qua SDK Manager, chờ Gradle sync.
+4. Device Manager → tạo/chọn emulator API 26 trở lên, chọn cấu hình `app` → **Run**. App mở tab **Thư viện**; có thể chuyển sang **Playlist** và **Cài đặt**.
 
-## Cấu trúc
+Clone vào thư mục local ngoài OneDrive. Teammate có thể dùng đường dẫn riêng, không cần sửa file build. Android Studio tự tạo `local.properties` theo SDK của từng máy; không commit file này.
 
-- Một module `:app`, package `com.vinyl`.
-- `MainActivity.kt` là màn hình khởi động Compose tối thiểu.
-- Khi triển khai MVP, chia package theo tính năng (`library`, `player`, `playlist`, `search`, `settings`), dùng `shared` cho phần dùng chung; khởi tạo dependency thủ công qua `AppContainer`.
-- Đọc [kế hoạch scaffold MVP](docs/MVP_SCAFFOLD_PLAN.md) để biết milestone B0–B5, vị trí file và convention. AI và teammate tuân thủ [AGENTS.md](AGENTS.md).
-- `PLANNING.md` mô tả yêu cầu sản phẩm; quyết định cấu trúc và cách triển khai base theo kế hoạch scaffold MVP.
+## Kiểm tra bằng terminal
 
-Project hiện là khung chạy, chưa quét nhạc hoặc phát nhạc.
+PowerShell, tại thư mục gốc (`JAVA_HOME` trỏ tới JDK 17 hoặc 21 để khởi chạy wrapper; daemon tự chọn JetBrains JDK 21 theo cấu hình repo):
 
-Android Studio Iguana (2023.2.1) đang cài trên máy khởi tạo project này quá cũ cho AGP 8.13 và SDK 36; cần cập nhật Studio để mở bằng giao diện. Build bằng Gradle wrapper và JDK 17 đã được kiểm tra thành công, APK đã mở trên emulator API 36.
+```powershell
+.\gradlew.bat :app:assembleDebug :app:testDebugUnitTest :app:lintDebug
+```
+
+Kiểm tra bằng `.\gradlew.bat --version`: mục Daemon JVM phải hiển thị Java 21, JetBrains từ `gradle/gradle-daemon-jvm.properties`. Không đổi sang JDK 25 vì Gradle 8.13 chưa hỗ trợ. Bytecode của app vẫn giữ Java/Kotlin 17.
+
+macOS/Linux dùng `bash ./gradlew` với các task tương tự. Wrapper tự tải Gradle đã ghim; lần sync đầu cần Internet. APK ở `app/build/outputs/apk/debug/app-debug.apk`.
+
+## Bắt đầu code
+
+- [Bàn giao B0](docs/b0/README.md): luồng file, cách thử và phần làm tiếp.
+- [Kế hoạch scaffold MVP](docs/MVP_SCAFFOLD_PLAN.md): milestone B0–B5, cấu trúc và convention.
+- [AGENTS.md](AGENTS.md): quy tắc cho AI và teammate.
+- [PLANNING.md](PLANNING.md): yêu cầu sản phẩm; quyết định cấu trúc và cách triển khai base theo kế hoạch scaffold.
+
+Một module `:app`, package `com.vinyl`. Root nối app; code tính năng nằm trong package tương ứng; theme chung ở `shared/ui`. Chỉ thêm database, Media3 hoặc dependency khác ở milestone cần dùng.
