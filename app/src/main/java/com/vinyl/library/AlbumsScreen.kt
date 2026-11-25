@@ -48,7 +48,7 @@ import com.vinyl.shared.database.AlbumSummary
 import com.vinyl.shared.ui.VinylTheme
 
 @Composable
-internal fun AlbumsRoute(viewModelFactory: ViewModelProvider.Factory) {
+internal fun AlbumsRoute(viewModelFactory: ViewModelProvider.Factory, onPlaySongs: (List<com.vinyl.shared.database.Song>, Int) -> Unit, canPlay: Boolean) {
     val viewModel: AlbumsViewModel = viewModel(factory = viewModelFactory)
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -70,6 +70,8 @@ internal fun AlbumsRoute(viewModelFactory: ViewModelProvider.Factory) {
         onScan = viewModel::scanLibrary,
         onAlbumClick = viewModel::onAlbumClick,
         onAlbumsClick = viewModel::onAlbumsClick,
+        onPlaySongs = onPlaySongs,
+        canPlay = canPlay,
     )
 }
 
@@ -81,6 +83,8 @@ internal fun AlbumsScreen(
     onScan: () -> Unit = {},
     onAlbumClick: (String) -> Unit = {},
     onAlbumsClick: () -> Unit = {},
+    onPlaySongs: (List<com.vinyl.shared.database.Song>, Int) -> Unit = { _, _ -> },
+    canPlay: Boolean = false,
 ) {
     val selectedAlbum = uiState.albums.find { it.albumId == uiState.selectedAlbumId }
     Column(
@@ -130,7 +134,7 @@ internal fun AlbumsScreen(
                         item { Text(stringResource(R.string.library_album_empty)) }
                     }
                     items(uiState.songs, key = { it.contentUri }) { song ->
-                        Column {
+                        Column(Modifier.fillMaxWidth().clickable(enabled = canPlay) { onPlaySongs(uiState.songs, uiState.songs.indexOf(song)) }.padding(vertical = 8.dp)) {
                             Text(song.title, style = MaterialTheme.typography.titleMedium)
                             Text("${song.artist} · ${formatDuration(song.durationMs)}")
                         }

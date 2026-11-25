@@ -1,6 +1,13 @@
 package com.vinyl
 
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Column
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.vinyl.player.MiniPlayer
+import com.vinyl.player.NowPlayingScreen
+import com.vinyl.player.NowPlayingViewModel
+import com.vinyl.player.PlayerPositionEffect
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
@@ -26,29 +33,35 @@ private enum class AppDestination(val route: String, val titleRes: Int, val symb
 }
 
 @Composable
-internal fun AppNavHost(albumsViewModelFactory: ViewModelProvider.Factory) {
+internal fun AppNavHost(albumsViewModelFactory: ViewModelProvider.Factory, nowPlayingViewModelFactory: ViewModelProvider.Factory) {
+    val player: NowPlayingViewModel = viewModel(factory = nowPlayingViewModelFactory)
+    val playback by player.uiState.collectAsStateWithLifecycle()
+    PlayerPositionEffect(player)
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route ?: AppDestination.LIBRARY.route
 
     Scaffold(
         bottomBar = {
-            NavigationBar {
-                for (destination in AppDestination.entries) {
-                    NavigationBarItem(
-                        selected = currentRoute == destination.route,
-                        onClick = {
-                            navController.navigate(destination.route) {
-                                popUpTo(navController.graph.findStartDestination().id) {
-                                    saveState = true
+            Column {
+                MiniPlayer(playback, { navController.navigate("nowPlaying") { launchSingleTop = true } }, player::playPause, player::retryConnection)
+                NavigationBar {
+                    for (destination in AppDestination.entries) {
+                        NavigationBarItem(
+                            selected = currentRoute == destination.route,
+                            onClick = {
+                                navController.navigate(destination.route) {
+                                    popUpTo(navController.graph.findStartDestination().id) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
                                 }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                        },
-                        icon = { Text(destination.symbol) },
-                        label = { Text(stringResource(destination.titleRes)) },
-                    )
+                            },
+                            icon = { Text(destination.symbol) },
+                            label = { Text(stringResource(destination.titleRes)) },
+                        )
+                    }
                 }
             }
         },
@@ -59,7 +72,10 @@ internal fun AppNavHost(albumsViewModelFactory: ViewModelProvider.Factory) {
             modifier = Modifier.padding(contentPadding),
         ) {
             composable(AppDestination.LIBRARY.route) {
-                AlbumsRoute(viewModelFactory = albumsViewModelFactory)
+                AlbumsRoute(albumsViewModelFactory, player::playSongs, playback.isConnected)
+            }
+            composable("nowPlaying") {
+                NowPlayingScreen(playback, player::playPause, player::next, player::previous, player::seekTo, player::setRepeatMode, player::setShuffle, { navController.popBackStack() })
             }
             composable(AppDestination.PLAYLISTS.route) { PlaylistsScreen() }
             composable(AppDestination.SETTINGS.route) { SettingsScreen() }
