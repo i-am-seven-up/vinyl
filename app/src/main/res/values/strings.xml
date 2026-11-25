@@ -3,11 +3,20 @@
     <string name="library_title">Thư viện</string>
     <string name="playlists_title">Playlist</string>
     <string name="settings_title">Cài đặt</string>
-    <string name="library_scaffold_notice">B0 · Khung thư viện. Chưa quét nhạc trên thiết bị.</string>
     <string name="library_loading">Đang tải thư viện…</string>
     <string name="library_empty">Chưa có album</string>
-    <string name="library_next_step">B1 sẽ bổ sung quyền truy cập, quét nhạc và album thật.</string>
-    <string name="library_preview_error">Không tải được thư viện. Đây là ví dụ trạng thái lỗi trong Preview.</string>
+    <string name="library_permission">Vinyl cần quyền đọc âm thanh để quét thư viện. Nếu đã từ chối nhiều lần, hãy cấp quyền trong Cài đặt.</string>
+    <string name="library_grant_permission">Cấp quyền / Thử lại</string>
+    <string name="library_open_settings">Mở Cài đặt ứng dụng</string>
+    <string name="library_rescan">Quét lại</string>
+    <string name="library_back">Về danh sách album</string>
+    <string name="library_scan_error">Không quét được nhạc. Thư viện đã lưu vẫn được giữ nguyên.</string>
+    <string name="library_load_error">Không đọc được thư viện. Hãy thử lại hoặc mở lại ứng dụng.</string>
+    <string name="library_retry">Thử lại</string>
+    <string name="library_album_empty">Album không còn bài hát. Hãy quay lại thư viện.</string>
+    <plurals name="library_song_count">
+        <item quantity="other">%1$d bài hát</item>
+    </plurals>
     <string name="playlists_scaffold_notice">Đang xây dựng · Quản lý playlist sẽ có ở B4.</string>
     <string name="settings_scaffold_notice">Đang xây dựng · Theme hiện theo hệ thống. Tùy chọn theme và quét lại sẽ có ở B5.</string>
 </resources>

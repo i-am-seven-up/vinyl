@@ -1,6 +1,6 @@
 # Kế hoạch scaffold MVP — Vinyl
 
-Trạng thái: B0 đã có code, xem `docs/b0/README.md` để biết phạm vi và kết quả kiểm tra. B1–B5 chưa triển khai. Mục tiêu là một base chạy bằng nhạc thật để Quý làm engine, Khánh mở rộng UI theo cùng pattern.
+Trạng thái: B0 và B1 đã có code; xem `docs/b0/README.md` và `docs/b1/README.md` để biết phạm vi và kết quả kiểm tra. B2–B5 chưa triển khai. Mục tiêu là một base chạy bằng nhạc thật để Quý làm engine, Khánh mở rộng UI theo cùng pattern.
 
 ## 1. Các quyết định chung
 
