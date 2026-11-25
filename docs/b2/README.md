@@ -1,5 +1,7 @@
 # B2 / L2 — Player nền và mini player
 
+PR: [#3 — B2 background playback](https://github.com/i-am-seven-up/vinyl/pull/3) → `main`.
+
 Branch: `codex/b2-background-player`, từ `origin/main` sau B1. Ngày bàn giao: 26/11/2026.
 
 ## Đã triển khai
