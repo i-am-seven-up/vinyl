@@ -1,6 +1,6 @@
 # Kế hoạch scaffold MVP — Vinyl
 
-Trạng thái: B0, B1 và B2 đã có code; xem `docs/b0/README.md`, `docs/b1/README.md` và `docs/b2/README.md` để biết phạm vi và kết quả kiểm tra. B2 còn kiểm tra thiết bị thật/API 32/gapless. B3–B5 chưa triển khai. Mục tiêu là một base chạy bằng nhạc thật để Quý làm engine, Khánh mở rộng UI theo cùng pattern.
+Trạng thái: B0–B3 đã có code; xem `docs/b0/README.md`, `docs/b1/README.md` `docs/b2/README.md` và `docs/b3/README.md` để biết phạm vi và kết quả kiểm tra. B2 còn kiểm tra thiết bị thật/API 32/gapless. B3 còn kiểm tra Bluetooth/fade máy thật/API 32. B4–B5 chưa triển khai. Mục tiêu là một base chạy bằng nhạc thật để Quý làm engine, Khánh mở rộng UI theo cùng pattern.
 
 ## 1. Các quyết định chung
 

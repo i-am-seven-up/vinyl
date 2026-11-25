@@ -29,6 +29,9 @@ internal class PlayerController(context: Context) {
         if (connection != null) return
         val future = MediaController.Builder(appContext, SessionToken(appContext, ComponentName(appContext, PlaybackService::class.java)))
             .setListener(object : MediaController.Listener {
+                override fun onExtrasChanged(controller: MediaController, extras: android.os.Bundle) {
+                    updateState()
+                }
                 override fun onDisconnected(controller: MediaController) {
                     disconnect()
                     mutableState.value = PlaybackUiState(errorMessage = "Playback disconnected. Retry connection.")
@@ -122,7 +125,7 @@ internal class PlayerController(context: Context) {
             canPrevious = player.mediaItemCount > 0,
             repeatMode = player.repeatMode,
             isShuffling = player.shuffleModeEnabled,
-            errorMessage = player.playerError?.localizedMessage,
+            errorMessage = player.playerError?.localizedMessage ?: player.sessionExtras.getString("playback_storage_error"),
         )
     }
 }

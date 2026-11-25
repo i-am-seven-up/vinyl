@@ -15,7 +15,9 @@ import com.vinyl.library.MediaStoreScanner
 import com.vinyl.shared.database.VinylDatabase
 
 internal class AppContainer(context: Context) {
-    private val database = Room.databaseBuilder(context, VinylDatabase::class.java, "vinyl.db").build()
+    private val database = Room.databaseBuilder(context, VinylDatabase::class.java, "vinyl.db").addMigrations(com.vinyl.shared.database.MIGRATION_1_2).build()
+    internal val playbackDao = database.playbackDao()
+    internal val playbackStateStore = com.vinyl.player.PlaybackStateStore(playbackDao, context.contentResolver)
     private val libraryRepository = LibraryRepository(MediaStoreScanner(context)::getSongs, database.songDao())
     val imageLoader = ImageLoader.Builder(context)
         .components {
