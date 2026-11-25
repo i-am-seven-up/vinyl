@@ -1,6 +1,6 @@
 # Vinyl
 
-App nghe nhạc offline, Kotlin + Jetpack Compose. Hiện đã có khung B0: ba tab, theme theo hệ thống và mẫu màn hình có ViewModel. Chưa quét hoặc phát nhạc.
+App nghe nhạc offline, Kotlin + Jetpack Compose. B1 có quyền đọc nhạc, quét MediaStore vào Room, danh sách album và chi tiết bài hát. Theme theo hệ thống, ba tab từ B0. Playback bắt đầu ở B2.
 
 ## Mở và chạy
 
@@ -28,6 +28,7 @@ macOS/Linux dùng `bash ./gradlew` với các task tương tự. Wrapper tự t�
 ## Bắt đầu code
 
 - [Bàn giao B0](docs/b0/README.md): luồng file, cách thử và phần làm tiếp.
+- [Bàn giao B1 / L1](docs/b1/README.md): thư viện thật, API mẫu, bộ nhạc tổng hợp và kết quả kiểm tra.
 - [Kế hoạch scaffold MVP](docs/MVP_SCAFFOLD_PLAN.md): milestone B0–B5, cấu trúc và convention.
 - [AGENTS.md](AGENTS.md): quy tắc cho AI và teammate.
 - [PLANNING.md](PLANNING.md): yêu cầu sản phẩm; quyết định cấu trúc và cách triển khai base theo kế hoạch scaffold.

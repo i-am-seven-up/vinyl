@@ -23,7 +23,7 @@ JDK chạy Gradle và bytecode của app là hai cấu hình khác nhau: daemon 
 3. Trong SDK Manager, cài Android SDK Platform 36, Android SDK Platform-Tools và Android Emulator. Chấp nhận SDK licenses khi được hỏi.
 4. Sync project với Internet. Gradle dùng tiêu chí **Java 21 + JetBrains** trong file daemon; tự tìm JDK phù hợp hoặc tải theo URL đã lưu nếu chưa có. Không sửa URL hay thêm đường dẫn JDK của máy vào repo.
 5. Trong Settings → Build, Execution, Deployment → Build Tools → Gradle, dùng Gradle Wrapper. Nếu IDE hiển thị Gradle JVM Criteria, kiểm tra Java 21 và JetBrains. Nếu cần chọn JDK để khởi chạy wrapper, chọn JDK 21; có thể dùng Download JDK để cài JetBrains 21. JDK 17 cũng dùng được để khởi chạy wrapper; không chọn JDK 25 với Gradle 8.13.
-6. Trong Device Manager, tạo emulator API 36 để cùng kiểm tra trên một phiên bản. Chọn cấu hình `app`, chọn emulator và Run. B0 mở tab Thư viện, chuyển được Playlist và Cài đặt; chưa quét hoặc phát nhạc.
+6. Trong Device Manager, tạo emulator API 36 để cùng kiểm tra trên một phiên bản. Chọn cấu hình `app`, chọn emulator và Run. B1 mở tab Thư viện: cấp quyền đọc âm thanh để scan nhạc thật; xem [bàn giao B1](b1/README.md) để chuẩn bị nhạc. Chưa có playback.
 
 Android Studio tự tạo `local.properties` theo Android SDK của từng máy. `.idea/` và `local.properties` đã được ignore; không commit hai phần này.
 
@@ -48,7 +48,7 @@ bash ./gradlew :app:assembleDebug :app:testDebugUnitTest :app:lintDebug
 Kết quả cần thấy:
 
 - `Gradle 8.13`; mục `Daemon JVM` ghi `Compatible with Java 21, JetBrains` từ `gradle/gradle-daemon-jvm.properties`. `Launcher JVM` có thể là 17 hoặc 21.
-- `BUILD SUCCESSFUL`; B0 chưa có unit test nên `testDebugUnitTest` trả `NO-SOURCE`, không phải lỗi.
+- `BUILD SUCCESSFUL`; B1 có 4 unit test cho bộ lọc và chuẩn hóa tìm kiếm. Test Room/MediaStore chạy riêng bằng `:app:connectedDebugAndroidTest` khi có emulator.
 - APK ở `app/build/outputs/apk/debug/app-debug.apk`.
 
 ## 4. Khi gặp lỗi setup
