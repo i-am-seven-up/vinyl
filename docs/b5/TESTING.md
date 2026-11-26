@@ -22,6 +22,10 @@ B1–B4 regression vẫn pass, gồm snapshot 3.000 record, playlist rescan/migr
 
 Lint: 0 errors, 19 warnings và 1 hint. Còn cảnh báo version dependency/target được ghim, exported media service, icon app, KTX và gợi ý Palette KTX; không thêm baseline/suppress. `git diff --check` sạch.
 
+## Clone sạch local
+
+Clone commit B5 vào thư mục local riêng trong app/build, không copy local.properties hoặc .idea. Chỉ đặt ANDROID_HOME tới SDK local rồi chạy wrapper `:app:assembleDebug`: BUILD SUCCESSFUL, 38 task executed. Dùng dependency cache chung của máy; đây không phải xác nhận từ một máy teammate mới.
+
 ## Smoke nhạc thật API 36
 
 - Cài debug APK, mở hướng dẫn cấp quyền, chọn Allow trong dialog Android. Scan thấy 3 album/6 bài của bộ tone B1.

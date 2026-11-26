@@ -7,7 +7,7 @@ Ngày bàn giao: 26/11/2026. Branch `codex/b5-search-settings`, từ `origin/mai
 - Tab Tìm kiếm: tên bài/nghệ sĩ/album trên cột chuẩn hóa Room, không dấu và không phân biệt hoa thường. Debounce 300 ms, hủy query cũ, chặn kết quả cũ ghi đè input mới. Chuỗi rỗng không truy vấn toàn thư viện. `%`, `_`, `!` được escape như ký tự thường; bind tham số.
 - Settings: theme Hệ thống/Sáng/Tối lưu bằng DataStore Preferences, áp dụng toàn app và icon system bar; rescan có trạng thái đang quét/thành công/lỗi/thử lại và luồng xin quyền/mở Android Settings.
 - Library: Album/Bài hát/Nghệ sĩ, detail nghệ sĩ và sort tên A–Z/Z–A. Nhóm nghệ sĩ theo artistId, bài hát dùng chính Song có sẵn. Permission screen giải thích bước bắt đầu với nhạc local.
-- Palette tô nền/text tương phản cho hàng album theo bìa. Decode bitmap tối đa 128 px trên IO; cache LRU 64 entry theo ArtworkRequest có URI/version, gồm fallback bìa thiếu/hỏng. Không tính lại trong body recomposition, không lưu Bitmap vào Room.
+- Palette tô nền/text tương phản cho hàng album theo bìa. Decode bitmap khoảng 128 px trên IO; cache LRU 64 entry theo ArtworkRequest có URI/version, gồm fallback bìa thiếu/hỏng. Không tính lại trong body recomposition, không lưu Bitmap vào Room.
 - Library ViewModel sống ở AppNavHost, nên đổi tab không tạo lại scan/controller. Settings và Search dùng chung LibraryRepository; B1–B4 giữ nguyên dữ liệu, Room vẫn v3.
 
 Dependencies thêm: DataStore Preferences 1.1.7 và Palette 1.0.0, ghim bản stable đã build với toolchain repo. Không nâng các version hiện có. Tham chiếu [DataStore release](https://developer.android.com/jetpack/androidx/releases/datastore#1.1.7) và [Palette](https://developer.android.com/develop/ui/views/graphics/palette-colors).
