@@ -1,5 +1,7 @@
 # B5 — Search, Settings và base MVP
 
+PR: [#6 — B5 search/settings/library](https://github.com/i-am-seven-up/vinyl/pull/6) → `main`.
+
 Ngày bàn giao: 26/11/2026. Branch `codex/b5-search-settings`, từ `origin/main` sau B4/PR #5 merge.
 
 ## Phạm vi
