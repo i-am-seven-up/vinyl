@@ -1,5 +1,7 @@
 # B4 / L3 — Playlist MVP
 
+PR: [#5 — B4 playlist MVP](https://github.com/i-am-seven-up/vinyl/pull/5) → `main`.
+
 Ngày bàn giao: 26/11/2026. Branch `codex/b4-playlists`, từ `origin/main` sau khi B3/PR #4 merge.
 
 ## Phạm vi
