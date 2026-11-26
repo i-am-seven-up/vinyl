@@ -19,11 +19,11 @@ JDK chạy Gradle và bytecode của app là hai cấu hình khác nhau: daemon 
 ## 2. Mở project lần đầu
 
 1. Cài Android Studio Narwhal 4 (2025.1.4) hoặc mới hơn. Rabbit 2 dùng được.
-2. Clone repo `https://github.com/i-am-seven-up/vinyl.git`, checkout nhánh chứa B0 hoặc `main` sau khi PR B0 được merge. Mở thư mục gốc có `settings.gradle.kts`, không mở riêng thư mục `app`.
+2. Clone repo `https://github.com/i-am-seven-up/vinyl.git`, checkout `main` đã merge B0–B5, hoặc branch PR B5 để kiểm tra trước merge. Mở thư mục gốc có `settings.gradle.kts`, không mở riêng thư mục `app`.
 3. Trong SDK Manager, cài Android SDK Platform 36, Android SDK Platform-Tools và Android Emulator. Chấp nhận SDK licenses khi được hỏi.
 4. Sync project với Internet. Gradle dùng tiêu chí **Java 21 + JetBrains** trong file daemon; tự tìm JDK phù hợp hoặc tải theo URL đã lưu nếu chưa có. Không sửa URL hay thêm đường dẫn JDK của máy vào repo.
 5. Trong Settings → Build, Execution, Deployment → Build Tools → Gradle, dùng Gradle Wrapper. Nếu IDE hiển thị Gradle JVM Criteria, kiểm tra Java 21 và JetBrains. Nếu cần chọn JDK để khởi chạy wrapper, chọn JDK 21; có thể dùng Download JDK để cài JetBrains 21. JDK 17 cũng dùng được để khởi chạy wrapper; không chọn JDK 25 với Gradle 8.13.
-6. Trong Device Manager, tạo emulator API 36 để cùng kiểm tra trên một phiên bản. Chọn cấu hình `app`, chọn emulator và Run. B1 mở tab Thư viện: cấp quyền đọc âm thanh để scan nhạc thật; xem [bàn giao B1](b1/README.md) để chuẩn bị nhạc. Chưa có playback.
+6. Trong Device Manager, tạo emulator API 36 để cùng kiểm tra trên một phiên bản. Chọn cấu hình `app`, chọn emulator và Run. App mở tab Thư viện: cấp quyền đọc âm thanh để scan nhạc thật; xem [bàn giao B1](b1/README.md) để chuẩn bị nhạc. Chọn bài trong album để phát; thử Playlist, Tìm kiếm và Cài đặt theo [B5](b5/README.md).
 
 Android Studio tự tạo `local.properties` theo Android SDK của từng máy. `.idea/` và `local.properties` đã được ignore; không commit hai phần này.
 
@@ -48,7 +48,7 @@ bash ./gradlew :app:assembleDebug :app:testDebugUnitTest :app:lintDebug
 Kết quả cần thấy:
 
 - `Gradle 8.13`; mục `Daemon JVM` ghi `Compatible with Java 21, JetBrains` từ `gradle/gradle-daemon-jvm.properties`. `Launcher JVM` có thể là 17 hoặc 21.
-- `BUILD SUCCESSFUL`; B1 có 4 unit test cho bộ lọc và chuẩn hóa tìm kiếm. Test Room/MediaStore chạy riêng bằng `:app:connectedDebugAndroidTest` khi có emulator.
+- `BUILD SUCCESSFUL`; Base có 10 unit test cho bộ lọc/chuẩn hóa và engine playback. Test Room/MediaStore chạy riêng bằng `:app:connectedDebugAndroidTest` khi có emulator.
 - APK ở `app/build/outputs/apk/debug/app-debug.apk`.
 
 ## 4. Khi gặp lỗi setup
@@ -62,3 +62,11 @@ Kết quả cần thấy:
 | IDE còn dùng cấu hình cũ sau khi pull | Sync lại project; nếu cần chạy `gradlew --stop` bằng wrapper của hệ điều hành rồi build lại. |
 
 Không commit `org.gradle.java.home` chứa đường dẫn cá nhân. Muốn đổi phiên bản dùng chung, sửa cấu hình qua một PR, cập nhật hướng dẫn này và chạy lại ba task kiểm tra bên trên.
+
+## 5. Nhạc test và nghiệm thu MVP
+
+Có thể dùng nhạc có quyền sử dụng hoặc script tone tổng hợp [B1](b1/README.md#chạy-thử-với-nhạc-hợp-pháp) (Python 3 + FFmpeg local). File MP3 sinh vào app/build, không cần API key. Chép vào Music trên emulator qua Device Explorer, chờ MediaStore index, cấp quyền trong app và Quét lại.
+
+Chạy luồng [B5 handoff](handoff/B5.md#chạy-xuyên-suốt): scan → album → phát nền → playlist → tìm kiếm không dấu → đổi theme/rescan → mở lại. `connectedDebugAndroidTest` cần emulator đang boot xong; bộ hiện tại có 20 device test. APK build từ source hoạt động offline sau khi dependencies đã sync.
+
+Không copy local.properties/JDK path của người khác. Terminal không có local.properties có thể dùng ANDROID_HOME trỏ tới Android SDK local của chính máy; Gradle vẫn dùng daemon criteria đã ghim. Không ghi đường dẫn SDK cá nhân vào repo.

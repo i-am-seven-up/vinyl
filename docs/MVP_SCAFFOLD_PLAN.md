@@ -1,6 +1,6 @@
 # Kế hoạch scaffold MVP — Vinyl
 
-Trạng thái: B0–B4 đã có code; xem `docs/b0/README.md`, `docs/b1/README.md`, `docs/b2/README.md`, `docs/b3/README.md` và `docs/b4/README.md` để biết phạm vi và kết quả kiểm tra. B2 còn kiểm tra thiết bị thật/API 32/gapless. B3 còn kiểm tra Bluetooth/fade máy thật/API 32. B4 có playlist MVP + nút đổi thứ tự; Khánh cải thiện UI sau. B5 chưa triển khai. Mục tiêu là một base chạy bằng nhạc thật để Quý làm engine, Khánh mở rộng UI theo cùng pattern.
+Trạng thái: B0–B5 đã có code base; xem `docs/b0/README.md`, `docs/b1/README.md`, `docs/b2/README.md`, `docs/b3/README.md`, `docs/b4/README.md` và `docs/b5/README.md` để biết phạm vi và kết quả kiểm tra. B2 còn kiểm tra thiết bị thật/API 32/gapless. B3 còn kiểm tra Bluetooth/fade máy thật/API 32. B4 có playlist MVP + nút đổi thứ tự; Khánh cải thiện UI sau. B5 có Search/Settings/theme/Palette và UI Songs/Artists/sort/onboarding cơ bản; Khánh tiếp tục polish. QA B5 API 32/máy thật/profiler và xác nhận clone trên máy teammate còn mở. Mục tiêu là một base chạy bằng nhạc thật để Quý làm engine, Khánh mở rộng UI theo cùng pattern.
 
 ## 1. Các quyết định chung
 
@@ -237,7 +237,7 @@ Tách thao tác đọc và thao tác thay đổi dữ liệu. Tên hàm phải n
 
 - Search dùng Room LIKE trên cột bỏ dấu, debounce khoảng 300ms; tham số query có binding, thống nhất xử lý ký tự % và _ như chữ tìm kiếm khi cần.
 - DataStore lưu theme; Settings có rescan và feedback đang scan/lỗi. Palette xử lý theo bìa, không tính lại mỗi lần recomposition.
-- Khánh hoàn thiện Songs/Artists, sort và onboarding; cải thiện Queue/NowPlaying từ MVP UI đã có ở B2 theo API đã bàn giao. Quý hỗ trợ engine và review pattern.
+- B5 cung cấp UI cơ bản Songs/Artists, sort tên và hướng dẫn cấp quyền để có luồng dùng được. Khánh hoàn thiện thiết kế Songs/Artists, sort và onboarding; cải thiện Queue/NowPlaying từ MVP UI đã có ở B2 theo API đã bàn giao. Quý hỗ trợ engine và review pattern.
 - Chạy một luồng xuyên suốt: cấp quyền → scan → chọn album → phát nền → thêm playlist → tìm kiếm → mở lại app.
 
 Đạt khi: teammate tự clone/run bằng README và nhạc test, không cần Quý sửa cấu hình trên máy teammate.

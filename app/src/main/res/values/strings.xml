@@ -17,7 +17,6 @@
     <plurals name="library_song_count">
         <item quantity="other">%1$d bài hát</item>
     </plurals>
-    <string name="settings_scaffold_notice">Đang xây dựng · Theme hiện theo hệ thống. Tùy chọn theme và quét lại sẽ có ở B5.</string>
     <string name="queue_title">Hàng đợi</string>
     <string name="queue_empty">Hàng đợi trống. Thêm bài từ thư viện.</string>
     <string name="queue_current">Đang phát</string>
@@ -51,4 +50,19 @@
     <string name="playlist_name">Tên playlist</string>
     <string name="playlist_save">Lưu</string>
     <string name="playlist_delete_message">Xóa “%1$s”? File nhạc vẫn được giữ trên máy.</string>
+    <string name="search_title">Tìm kiếm</string>
+    <string name="search_hint">Bài hát, nghệ sĩ hoặc album</string>
+    <string name="search_start">Tìm trong thư viện đã quét. Có thể gõ không dấu.</string>
+    <string name="search_empty">Không có kết quả</string>
+    <string name="settings_theme">Giao diện</string>
+    <string name="settings_system">Theo hệ thống</string>
+    <string name="settings_light">Sáng</string>
+    <string name="settings_dark">Tối</string>
+    <string name="settings_scan_done">Đã quét xong thư viện</string>
+    <string name="library_albums">Album</string>
+    <string name="library_songs">Bài hát</string>
+    <string name="library_artists">Nghệ sĩ</string>
+    <string name="library_sort_asc">Tên A–Z</string>
+    <string name="library_sort_desc">Tên Z–A</string>
+    <string name="library_welcome">Chào mừng đến Vinyl. Chép nhạc vào thư mục Music trên máy rồi cấp quyền để bắt đầu. Nhạc và playlist được lưu trên thiết bị.</string>
 </resources>
