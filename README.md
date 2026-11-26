@@ -30,6 +30,7 @@ macOS/Linux dùng `bash ./gradlew` với các task tương tự. Wrapper tự t�
 - [Bàn giao B0](docs/b0/README.md): luồng file, cách thử và phần làm tiếp.
 - [Bàn giao B1 / L1](docs/b1/README.md): thư viện thật, API mẫu, bộ nhạc tổng hợp và kết quả kiểm tra.
 - [Bàn giao B2 / L2](docs/b2/README.md): player nền, mini player, API queue và kết quả kiểm tra.
+- [Bàn giao B3](docs/b3/README.md): fade, lịch sử nghe, snapshot/resume và migration v2.
 - [Kế hoạch scaffold MVP](docs/MVP_SCAFFOLD_PLAN.md): milestone B0–B5, cấu trúc và convention.
 - [AGENTS.md](AGENTS.md): quy tắc cho AI và teammate.
 - [PLANNING.md](PLANNING.md): yêu cầu sản phẩm; quyết định cấu trúc và cách triển khai base theo kế hoạch scaffold.
