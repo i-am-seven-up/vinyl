@@ -2,7 +2,7 @@ package com.vinyl.shared.database
 
 import androidx.room.Dao
 import androidx.room.Entity
-import androidx.room.Insert
+import androidx.room.Upsert
 import androidx.room.PrimaryKey
 import androidx.room.Query
 import androidx.room.Transaction
@@ -53,16 +53,21 @@ internal abstract class SongDao {
     @Query("SELECT * FROM songs ORDER BY titleNorm, contentUri")
     abstract suspend fun getSongs(): List<Song>
 
-    // B1 has no song references yet. The complete snapshot is replaced atomically.
+    @Query("SELECT * FROM songs ORDER BY titleNorm, contentUri")
+    abstract fun observeSongs(): Flow<List<Song>>
+
+    // Update retained rows in place so rescanning preserves playlist references.
     @Transaction
     open suspend fun replaceSongs(songs: List<Song>) {
-        deleteSongs()
-        insertSongs(songs)
+        val retained = songs.map { it.contentUri }.toHashSet()
+        require(retained.size == songs.size) { "Scan contains duplicate song URIs" }
+        upsertSongs(songs)
+        getSongs().filter { it.contentUri !in retained }.forEach { deleteSong(it.contentUri) }
     }
 
-    @Query("DELETE FROM songs")
-    protected abstract suspend fun deleteSongs()
+    @Query("DELETE FROM songs WHERE contentUri = :uri")
+    protected abstract suspend fun deleteSong(uri: String)
 
-    @Insert
-    protected abstract suspend fun insertSongs(songs: List<Song>)
+    @Upsert
+    protected abstract suspend fun upsertSongs(songs: List<Song>)
 }

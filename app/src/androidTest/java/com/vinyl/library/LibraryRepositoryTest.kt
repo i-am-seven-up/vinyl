@@ -52,11 +52,11 @@ internal class LibraryRepositoryTest {
         }
     }
 
-    @Test fun invalidSnapshotRollsBackDeletion() = runBlocking {
+    @Test fun invalidSnapshotPreservesSavedLibrary() = runBlocking {
         val dao = database.songDao()
         val saved = listOf(song(1))
         dao.replaceSongs(saved)
-        assertThrows(android.database.sqlite.SQLiteConstraintException::class.java) {
+        assertThrows(IllegalArgumentException::class.java) {
             runBlocking { dao.replaceSongs(listOf(song(2), song(2))) }
         }
         assertEquals(saved, dao.getSongs())
