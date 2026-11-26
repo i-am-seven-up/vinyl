@@ -9,6 +9,8 @@ import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.*
@@ -25,7 +27,7 @@ import com.vinyl.R
 import com.vinyl.shared.ui.VinylTheme
 
 @Composable
-internal fun SettingsRoute(state: SettingsUiState, onTheme: (AppTheme) -> Unit, onScan: () -> Unit, onRetry: () -> Unit) {
+internal fun SettingsRoute(state: SettingsUiState, onTheme: (AppTheme) -> Unit, onScan: () -> Unit, onRetry: () -> Unit, onHistory: () -> Unit) {
     val context = LocalContext.current
     val permission = if (Build.VERSION.SDK_INT >= 33) Manifest.permission.READ_MEDIA_AUDIO else Manifest.permission.READ_EXTERNAL_STORAGE
     var hasPermission by remember { mutableStateOf(false) }
@@ -33,14 +35,15 @@ internal fun SettingsRoute(state: SettingsUiState, onTheme: (AppTheme) -> Unit, 
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { hasPermission = context.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED }
     SettingsScreen(state, hasPermission, onTheme, onScan, onRetry, { launcher.launch(permission) }, {
         context.startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:${context.packageName}")))
-    })
+    }, onHistory)
 }
 
 @Composable
 internal fun SettingsScreen(state: SettingsUiState, hasPermission: Boolean, onTheme: (AppTheme) -> Unit, onScan: () -> Unit,
-    onRetry: () -> Unit, onPermission: () -> Unit, onOpenSettings: () -> Unit) {
-    Column(Modifier.fillMaxSize().padding(24.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    onRetry: () -> Unit, onPermission: () -> Unit, onOpenSettings: () -> Unit, onHistory: () -> Unit = {}) {
+    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(24.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(stringResource(R.string.settings_title), style = MaterialTheme.typography.headlineLarge)
+        TextButton(onClick = onHistory) { Text(stringResource(R.string.history_title)) }
         Text(stringResource(R.string.settings_theme), style = MaterialTheme.typography.titleLarge)
         if (state.isLoading) CircularProgressIndicator()
         Column(Modifier.selectableGroup()) {

@@ -26,6 +26,9 @@ internal class AppContainer(context: Context) {
     val settingsViewModelFactory = viewModelFactory {
         initializer { com.vinyl.settings.SettingsViewModel(settingsStore, libraryRepository) }
     }
+    val historyViewModelFactory = viewModelFactory {
+        initializer { com.vinyl.history.HistoryViewModel(playbackDao) }
+    }
     val searchViewModelFactory = viewModelFactory {
         initializer { com.vinyl.search.SearchViewModel(libraryRepository, createSavedStateHandle()) }
     }

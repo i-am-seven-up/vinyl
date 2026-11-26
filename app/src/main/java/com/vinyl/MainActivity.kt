@@ -34,7 +34,7 @@ class MainActivity : ComponentActivity() {
                 bars.isAppearanceLightNavigationBars = !isDark
             }
             VinylTheme(isDarkTheme = isDark) {
-                AppNavHost(appContainer.albumsViewModelFactory, appContainer.nowPlayingViewModelFactory, appContainer.playlistsViewModelFactory, appContainer.searchViewModelFactory, settings, appContainer.artworkPalette)
+                AppNavHost(appContainer.albumsViewModelFactory, appContainer.nowPlayingViewModelFactory, appContainer.playlistsViewModelFactory, appContainer.searchViewModelFactory, settings, appContainer.artworkPalette, appContainer.historyViewModelFactory)
             }
         }
     }

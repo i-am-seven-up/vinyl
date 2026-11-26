@@ -29,6 +29,7 @@ import com.vinyl.settings.SettingsRoute
 import com.vinyl.settings.SettingsViewModel
 import com.vinyl.search.SearchRoute
 import com.vinyl.library.ArtworkPalette
+import com.vinyl.history.HistoryRoute
 
 private enum class AppDestination(val route: String, val titleRes: Int, val symbol: String) {
     LIBRARY("library", R.string.library_title, "♫"),
@@ -38,7 +39,7 @@ private enum class AppDestination(val route: String, val titleRes: Int, val symb
 }
 
 @Composable
-internal fun AppNavHost(albumsViewModelFactory: ViewModelProvider.Factory, nowPlayingViewModelFactory: ViewModelProvider.Factory, playlistsViewModelFactory: ViewModelProvider.Factory, searchViewModelFactory: ViewModelProvider.Factory, settings: SettingsViewModel, artworkPalette: ArtworkPalette) {
+internal fun AppNavHost(albumsViewModelFactory: ViewModelProvider.Factory, nowPlayingViewModelFactory: ViewModelProvider.Factory, playlistsViewModelFactory: ViewModelProvider.Factory, searchViewModelFactory: ViewModelProvider.Factory, settings: SettingsViewModel, artworkPalette: ArtworkPalette, historyViewModelFactory: ViewModelProvider.Factory) {
     val library: com.vinyl.library.AlbumsViewModel = viewModel(factory = albumsViewModelFactory)
     val player: NowPlayingViewModel = viewModel(factory = nowPlayingViewModelFactory)
     val preferences by settings.uiState.collectAsStateWithLifecycle()
@@ -81,6 +82,7 @@ internal fun AppNavHost(albumsViewModelFactory: ViewModelProvider.Factory, nowPl
             composable(AppDestination.LIBRARY.route) {
                 AlbumsRoute(library, player::playSongs, playback.isConnected, player::playNext, player::addToQueue, artworkPalette::findColors)
             }
+            composable("history") { HistoryRoute(historyViewModelFactory, { navController.popBackStack() }) }
             composable("queue") {
                 QueueScreen(playback, player::playQueueItem, player::removeFromQueue, { navController.popBackStack() })
             }
@@ -89,7 +91,7 @@ internal fun AppNavHost(albumsViewModelFactory: ViewModelProvider.Factory, nowPl
             }
             composable(AppDestination.PLAYLISTS.route) { PlaylistsRoute(playlistsViewModelFactory, playback.isConnected, player::playSongs) }
             composable(AppDestination.SEARCH.route) { SearchRoute(searchViewModelFactory, playback.isConnected, player::playSongs) }
-            composable(AppDestination.SETTINGS.route) { SettingsRoute(preferences, settings::setTheme, settings::scanLibrary, settings::retry) }
+            composable(AppDestination.SETTINGS.route) { SettingsRoute(preferences, settings::setTheme, settings::scanLibrary, settings::retry, { navController.navigate("history") { launchSingleTop = true } }) }
         }
     }
 }

@@ -21,7 +21,7 @@ Ngày bàn giao: 26/11/2026. Branch: `codex/b3-playback-engine`, từ `origin/ma
 
 APK local: `docs/b3/vinyl-b3-debug.apk` (gitignore); build lại sau clone bằng `./gradlew.bat :app:assembleDebug`.
 
-Chưa có màn lịch sử/thống kê riêng; B3 cung cấp dữ liệu engine. B4/L3 tiếp theo là playlist và migration schema mới.
+B3 cung cấp dữ liệu engine; màn lịch sử được bổ sung tại [B5](../b5/README.md). Chưa có màn thống kê tổng hợp. B4/L3 tiếp theo là playlist và migration schema mới.
 
 ## Giới hạn
 

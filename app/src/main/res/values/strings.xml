@@ -65,4 +65,11 @@
     <string name="library_sort_asc">Tên A–Z</string>
     <string name="library_sort_desc">Tên Z–A</string>
     <string name="library_welcome">Chào mừng đến Vinyl. Chép nhạc vào thư mục Music trên máy rồi cấp quyền để bắt đầu. Nhạc và playlist được lưu trên thiết bị.</string>
+    <string name="history_title">Lịch sử nghe</string>
+    <string name="history_description">Mới nhất trước · Thời lượng thực sự đã nghe. Dữ liệu có thể cập nhật sau vài giây.</string>
+    <string name="history_empty">Chưa có lịch sử. Phát nhạc rồi quay lại đây.</string>
+    <string name="history_missing_song">Bài không còn trong thư viện</string>
+    <string name="history_under_second">dưới 1 giây</string>
+    <string name="history_listened">Đã nghe: %1$s</string>
+    <string name="history_more">Xem thêm</string>
 </resources>

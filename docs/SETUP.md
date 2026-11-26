@@ -67,6 +67,6 @@ Không commit `org.gradle.java.home` chứa đường dẫn cá nhân. Muốn đ
 
 Có thể dùng nhạc có quyền sử dụng hoặc script tone tổng hợp [B1](b1/README.md#chạy-thử-với-nhạc-hợp-pháp) (Python 3 + FFmpeg local). File MP3 sinh vào app/build, không cần API key. Chép vào Music trên emulator qua Device Explorer, chờ MediaStore index, cấp quyền trong app và Quét lại.
 
-Chạy luồng [B5 handoff](handoff/B5.md#chạy-xuyên-suốt): scan → album → phát nền → playlist → tìm kiếm không dấu → đổi theme/rescan → mở lại. `connectedDebugAndroidTest` cần emulator đang boot xong; bộ hiện tại có 20 device test. APK build từ source hoạt động offline sau khi dependencies đã sync.
+Chạy luồng [B5 handoff](handoff/B5.md#chạy-xuyên-suốt): scan → album → phát nền → playlist → tìm kiếm không dấu → đổi theme/rescan → lịch sử nghe → mở lại. `connectedDebugAndroidTest` cần emulator đang boot xong; bộ hiện tại có 22 device test. APK build từ source hoạt động offline sau khi dependencies đã sync.
 
 Không copy local.properties/JDK path của người khác. Terminal không có local.properties có thể dùng ANDROID_HOME trỏ tới Android SDK local của chính máy; Gradle vẫn dùng daemon criteria đã ghim. Không ghi đường dẫn SDK cá nhân vào repo.

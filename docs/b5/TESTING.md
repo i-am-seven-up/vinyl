@@ -8,7 +8,7 @@ Ngày: 26/11/2026. Emulator API 36, toolchain đã ghim trong repo.
 .\gradlew.bat :app:assembleDebug :app:testDebugUnitTest :app:lintDebug :app:connectedDebugAndroidTest --console=plain
 ```
 
-BUILD SUCCESSFUL: 10 JVM unit test và 20 instrumentation test, không fail/skip. Sau chỉnh presentation/system bars, assembleDebug và lintDebug chạy lại thành công.
+BUILD SUCCESSFUL: 10 JVM unit test và 22 instrumentation test, không fail/skip. Sau chỉnh presentation/system bars, assembleDebug và lintDebug chạy lại thành công.
 
 Năm test B5 bổ sung:
 
@@ -22,9 +22,15 @@ B1–B4 regression vẫn pass, gồm snapshot 3.000 record, playlist rescan/migr
 
 Lint: 0 errors, 19 warnings và 1 hint. Còn cảnh báo version dependency/target được ghim, exported media service, icon app, KTX và gợi ý Palette KTX; không thêm baseline/suppress. `git diff --check` sạch.
 
+## History bổ sung theo yêu cầu
+
+Hai test mới HistoryDeviceTest kiểm tra empty, lọc event 0 ms, thứ tự mới nhất và tie-break ID, giữ riêng lượt cùng bài, limit, metadata LEFT JOIN/missing, checkpoint update không nhân đôi event, rescan/xóa song giữ lịch sử; ViewModel tải 100→105, Flow nhận checkpoint và retry không ghi DB/playback state.
+
+Smoke API 36: Settings → Lịch sử nghe ban đầu empty; Library → Đường về 1 → play/pause → History hiện tên/nghệ sĩ, timestamp và Đã nghe 00:19, mini player paused. Sau cài bản cuối/force-stop/mở lại, lượt vẫn còn và thời lượng vẫn 00:19. [Ảnh History](screenshots/api36-history.png) đã xem. Stats tổng hợp không nằm trong yêu cầu màn này.
+
 ## Clone sạch local
 
-Clone commit B5 vào thư mục local riêng trong app/build, không copy local.properties hoặc .idea. Chỉ đặt ANDROID_HOME tới SDK local rồi chạy wrapper `:app:assembleDebug`: BUILD SUCCESSFUL, 38 task executed. Dùng dependency cache chung của máy; đây không phải xác nhận từ một máy teammate mới.
+Trước bổ sung History, clone commit B5 `ccb1b58` vào thư mục local riêng trong app/build, không copy local.properties hoặc .idea. Chỉ đặt ANDROID_HOME tới SDK local rồi chạy wrapper `:app:assembleDebug`: BUILD SUCCESSFUL, 38 task executed. Dùng dependency cache chung của máy; đây không phải xác nhận từ một máy teammate mới.
 
 ## Smoke nhạc thật API 36
 
