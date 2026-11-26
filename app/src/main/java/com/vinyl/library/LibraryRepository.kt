@@ -15,6 +15,10 @@ internal class LibraryRepository(
 
     fun observeAlbumSongs(albumId: String) = songDao.observeAlbumSongs(albumId)
 
+    fun observeSongs() = songDao.observeSongs()
+
+    fun observeSearchSongs(query: String) = songDao.observeSearchSongs(createSearchPattern(query))
+
     suspend fun scanLibrary() {
         scanMutex.withLock {
             val songs = getDeviceSongs()
@@ -22,4 +26,9 @@ internal class LibraryRepository(
             songDao.replaceSongs(songs)
         }
     }
+}
+
+internal fun createSearchPattern(query: String): String {
+    val normalized = normalizeSearchText(query.trim())
+    return "%" + normalized.replace("!", "!!").replace("%", "!%").replace("_", "!_") + "%"
 }

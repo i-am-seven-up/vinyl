@@ -56,6 +56,10 @@ internal abstract class SongDao {
     @Query("SELECT * FROM songs ORDER BY titleNorm, contentUri")
     abstract fun observeSongs(): Flow<List<Song>>
 
+    @Query("""SELECT * FROM songs WHERE titleNorm LIKE :pattern ESCAPE '!' OR artistNorm LIKE :pattern ESCAPE '!'
+        OR albumNorm LIKE :pattern ESCAPE '!' ORDER BY titleNorm, contentUri""")
+    abstract fun observeSearchSongs(pattern: String): Flow<List<Song>>
+
     // Update retained rows in place so rescanning preserves playlist references.
     @Transaction
     open suspend fun replaceSongs(songs: List<Song>) {

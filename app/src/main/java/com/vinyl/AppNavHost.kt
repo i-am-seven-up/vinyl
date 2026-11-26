@@ -25,17 +25,24 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.vinyl.library.AlbumsRoute
 import com.vinyl.playlist.PlaylistsRoute
-import com.vinyl.settings.SettingsScreen
+import com.vinyl.settings.SettingsRoute
+import com.vinyl.settings.SettingsViewModel
+import com.vinyl.search.SearchRoute
+import com.vinyl.library.ArtworkPalette
+import com.vinyl.history.HistoryRoute
 
 private enum class AppDestination(val route: String, val titleRes: Int, val symbol: String) {
     LIBRARY("library", R.string.library_title, "♫"),
+    SEARCH("search", R.string.search_title, "⌕"),
     PLAYLISTS("playlists", R.string.playlists_title, "≡"),
     SETTINGS("settings", R.string.settings_title, "⚙"),
 }
 
 @Composable
-internal fun AppNavHost(albumsViewModelFactory: ViewModelProvider.Factory, nowPlayingViewModelFactory: ViewModelProvider.Factory, playlistsViewModelFactory: ViewModelProvider.Factory) {
+internal fun AppNavHost(albumsViewModelFactory: ViewModelProvider.Factory, nowPlayingViewModelFactory: ViewModelProvider.Factory, playlistsViewModelFactory: ViewModelProvider.Factory, searchViewModelFactory: ViewModelProvider.Factory, settings: SettingsViewModel, artworkPalette: ArtworkPalette, historyViewModelFactory: ViewModelProvider.Factory) {
+    val library: com.vinyl.library.AlbumsViewModel = viewModel(factory = albumsViewModelFactory)
     val player: NowPlayingViewModel = viewModel(factory = nowPlayingViewModelFactory)
+    val preferences by settings.uiState.collectAsStateWithLifecycle()
     val playback by player.uiState.collectAsStateWithLifecycle()
     PlayerPositionEffect(player)
     val navController = rememberNavController()
@@ -73,8 +80,9 @@ internal fun AppNavHost(albumsViewModelFactory: ViewModelProvider.Factory, nowPl
             modifier = Modifier.padding(contentPadding),
         ) {
             composable(AppDestination.LIBRARY.route) {
-                AlbumsRoute(albumsViewModelFactory, player::playSongs, playback.isConnected, player::playNext, player::addToQueue)
+                AlbumsRoute(library, player::playSongs, playback.isConnected, player::playNext, player::addToQueue, artworkPalette::findColors)
             }
+            composable("history") { HistoryRoute(historyViewModelFactory, { navController.popBackStack() }) }
             composable("queue") {
                 QueueScreen(playback, player::playQueueItem, player::removeFromQueue, { navController.popBackStack() })
             }
@@ -82,7 +90,8 @@ internal fun AppNavHost(albumsViewModelFactory: ViewModelProvider.Factory, nowPl
                 NowPlayingScreen(playback, player::playPause, player::next, player::previous, player::seekTo, player::setRepeatMode, player::setShuffle, { navController.popBackStack() }, { navController.navigate("queue") { launchSingleTop = true } })
             }
             composable(AppDestination.PLAYLISTS.route) { PlaylistsRoute(playlistsViewModelFactory, playback.isConnected, player::playSongs) }
-            composable(AppDestination.SETTINGS.route) { SettingsScreen() }
+            composable(AppDestination.SEARCH.route) { SearchRoute(searchViewModelFactory, playback.isConnected, player::playSongs) }
+            composable(AppDestination.SETTINGS.route) { SettingsRoute(preferences, settings::setTheme, settings::scanLibrary, settings::retry, { navController.navigate("history") { launchSingleTop = true } }) }
         }
     }
 }

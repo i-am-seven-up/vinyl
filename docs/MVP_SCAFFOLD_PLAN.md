@@ -1,6 +1,6 @@
 # Kế hoạch scaffold MVP — Vinyl
 
-Trạng thái: B0–B4 đã có code; xem `docs/b0/README.md`, `docs/b1/README.md`, `docs/b2/README.md`, `docs/b3/README.md` và `docs/b4/README.md` để biết phạm vi và kết quả kiểm tra. B2 còn kiểm tra thiết bị thật/API 32/gapless. B3 còn kiểm tra Bluetooth/fade máy thật/API 32. B4 có playlist MVP + nút đổi thứ tự; Khánh cải thiện UI sau. B5 chưa triển khai. Mục tiêu là một base chạy bằng nhạc thật để Quý làm engine, Khánh mở rộng UI theo cùng pattern.
+Trạng thái: B0–B5 đã có code base; xem `docs/b0/README.md`, `docs/b1/README.md`, `docs/b2/README.md`, `docs/b3/README.md`, `docs/b4/README.md` và `docs/b5/README.md` để biết phạm vi và kết quả kiểm tra. B2 còn kiểm tra thiết bị thật/API 32/gapless. B3 còn kiểm tra Bluetooth/fade máy thật/API 32. B4 có playlist MVP + nút đổi thứ tự; Khánh cải thiện UI sau. B5 có Search/Settings/theme/Palette và UI Songs/Artists/sort/onboarding cơ bản, bổ sung History theo yêu cầu; Khánh tiếp tục polish. QA B5 API 32/máy thật/profiler và xác nhận clone trên máy teammate còn mở. Mục tiêu là một base chạy bằng nhạc thật để Quý làm engine, Khánh mở rộng UI theo cùng pattern.
 
 ## 1. Các quyết định chung
 
@@ -76,6 +76,9 @@ com.vinyl/
     PlaylistsViewModel.kt
     PlaylistsScreen.kt
     PlaylistRepository.kt  # Khi cần gom transaction/quy tắc ghi
+  history/
+    HistoryViewModel.kt
+    HistoryScreen.kt
   search/
     SearchViewModel.kt
     SearchScreen.kt
@@ -98,7 +101,7 @@ com.vinyl/
 ### 4.1. Chọn chỗ đặt file mới — dành cho người và AI
 
 1. Đọc code hiện có và tìm file cùng trách nhiệm trước khi tạo file mới.
-2. Code thuộc một tính năng đặt trong package tương ứng (`library`, `player`, `playlist`, `search`, `settings`). UI và logic của tính năng nằm cạnh nhau, không tạo thêm `data/domain/presentation` bên trong.
+2. Code thuộc một tính năng đặt trong package tương ứng (`library`, `player`, `playlist`, `history`, `search`, `settings`). UI và logic của tính năng nằm cạnh nhau, không tạo thêm `data/domain/presentation` bên trong.
 3. Code nhiều tính năng thực sự dùng chung mới đặt trong `shared/<trách nhiệm>`. Database Room tập trung tại `shared/database`; theme/component tái sử dụng tại `shared/ui`.
 4. Code dùng chung về dữ liệu không bắt buộc chuyển sang shared: search có thể dùng LibraryRepository; mini player có thể dùng PlayerController. Nếu vẫn do một tính năng sở hữu thì giữ ở tính năng đó. Không chuyển cả repository vào shared chỉ vì có caller thứ hai.
 5. Chỉ bổ sung package shared khi có trường hợp dùng cụ thể. Ví dụ `shared/permissions` cho luồng quyền dùng ở nhiều nơi; `shared/media` cho xử lý URI/metadata trung lập mà nhiều tính năng cần; `shared/model` chỉ khi có model chung không thuộc Room hoặc tính năng nào. Không tạo sẵn các thư mục này.
@@ -237,8 +240,10 @@ Tách thao tác đọc và thao tác thay đổi dữ liệu. Tên hàm phải n
 
 - Search dùng Room LIKE trên cột bỏ dấu, debounce khoảng 300ms; tham số query có binding, thống nhất xử lý ký tự % và _ như chữ tìm kiếm khi cần.
 - DataStore lưu theme; Settings có rescan và feedback đang scan/lỗi. Palette xử lý theo bìa, không tính lại mỗi lần recomposition.
-- Khánh hoàn thiện Songs/Artists, sort và onboarding; cải thiện Queue/NowPlaying từ MVP UI đã có ở B2 theo API đã bàn giao. Quý hỗ trợ engine và review pattern.
-- Chạy một luồng xuyên suốt: cấp quyền → scan → chọn album → phát nền → thêm playlist → tìm kiếm → mở lại app.
+- B5 cung cấp UI cơ bản Songs/Artists, sort tên và hướng dẫn cấp quyền để có luồng dùng được. Khánh hoàn thiện thiết kế Songs/Artists, sort và onboarding; cải thiện Queue/NowPlaying từ MVP UI đã có ở B2 theo API đã bàn giao. Quý hỗ trợ engine và review pattern.
+- History thuộc MVP: mở từ Settings, đọc play_events thật, mới nhất trước, hiển thị bài/nghệ sĩ khi còn trong thư viện, thời điểm và thời lượng thực nghe; thiếu bài vẫn hiện event với media ID. Có loading/empty/error/retry và Xem thêm mỗi 100 lượt. Không scan/ghi lịch sử khi mở màn; giữ từng event riêng khi nghe lặp. Stats tổng hợp/Wrapped không nằm trong bổ sung này.
+- Nghiệm thu History: phát/pause rồi mở màn thấy checkpoint, mở lại vẫn còn; rescan/xóa bài không xóa event; kiểm tra thứ tự, bài trùng, missing metadata và tải thêm. Query join không đổi schema v3.
+- Chạy một luồng xuyên suốt: cấp quyền → scan → chọn album → phát nền → thêm playlist → tìm kiếm → lịch sử nghe → mở lại app.
 
 Đạt khi: teammate tự clone/run bằng README và nhạc test, không cần Quý sửa cấu hình trên máy teammate.
 
@@ -255,11 +260,11 @@ Tách thao tác đọc và thao tác thay đổi dữ liệu. Tên hàm phải n
 
 Mỗi lát là một PR chạy được, kèm `docs/handoff/Lx.md`: bước chạy thử, luồng file cụ thể, API hiện có, file mẫu để copy, việc Khánh làm tiếp và giới hạn đã biết. Không đánh dấu hoàn tất bằng màn chỉ hiển thị dữ liệu giả.
 
-Base hoàn tất khi L1/L2/L3 hoạt động cùng nhau, có error/empty/loading, Preview, test cho logic rủi ro và teammate tự chạy được trên máy khác. Không cần UI đẹp để bàn giao.
+Base hoàn tất khi L1/L2/L3 và Search/Settings/History hoạt động cùng nhau, có error/empty/loading, Preview, test cho logic rủi ro và teammate tự chạy được trên máy khác. Không cần UI đẹp để bàn giao.
 
 ## 8. Ngoài đợt scaffold MVP
 
-Crossfade hai player, album overrides/crop, Wrapped, Story sharing và Vinyl animation theo phase 2 của PLANNING.md. Chưa tạo placeholder engine/API cho chúng; play_events và playback state trong MVP là phần nền thực sự cần giữ lại. Cài đặt crossfade chỉ xuất hiện khi engine đó đã hoạt động.
+Crossfade hai player, album overrides/crop, Wrapped, Story sharing và Vinyl animation theo phase 2 của PLANNING.md. Chưa tạo placeholder engine/API cho chúng; play_events và playback state là dữ liệu MVP; History UI được bổ sung ở B5, Stats tổng hợp/Wrapped vẫn ở phase sau. Cài đặt crossfade chỉ xuất hiện khi engine đó đã hoạt động.
 
 ## Tài liệu tham chiếu
 

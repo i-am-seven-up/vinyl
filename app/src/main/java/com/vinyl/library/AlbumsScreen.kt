@@ -28,6 +28,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.runtime.produceState
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.graphics.Color
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.ListItem
+import com.vinyl.shared.database.Song
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -43,18 +49,15 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.vinyl.R
 import com.vinyl.shared.database.AlbumSummary
 import com.vinyl.shared.ui.VinylTheme
 
 @Composable
-internal fun AlbumsRoute(viewModelFactory: ViewModelProvider.Factory, onPlaySongs: (List<com.vinyl.shared.database.Song>, Int) -> Unit, canPlay: Boolean, onPlayNext: (com.vinyl.shared.database.Song) -> Unit, onAddToQueue: (com.vinyl.shared.database.Song) -> Unit) {
-    val viewModel: AlbumsViewModel = viewModel(factory = viewModelFactory)
+internal fun AlbumsRoute(viewModel: AlbumsViewModel, onPlaySongs: (List<Song>, Int) -> Unit, canPlay: Boolean, onPlayNext: (Song) -> Unit, onAddToQueue: (Song) -> Unit, findArtworkColors: suspend (ArtworkRequest) -> ArtworkColors?) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val permission = if (Build.VERSION.SDK_INT >= 33) Manifest.permission.READ_MEDIA_AUDIO
@@ -79,6 +82,7 @@ internal fun AlbumsRoute(viewModelFactory: ViewModelProvider.Factory, onPlaySong
         canPlay = canPlay,
         onPlayNext = onPlayNext,
         onAddToQueue = onAddToQueue,
+        findArtworkColors = findArtworkColors,
     )
 }
 
@@ -90,11 +94,22 @@ internal fun AlbumsScreen(
     onScan: () -> Unit = {},
     onAlbumClick: (String) -> Unit = {},
     onAlbumsClick: () -> Unit = {},
-    onPlaySongs: (List<com.vinyl.shared.database.Song>, Int) -> Unit = { _, _ -> },
+    onPlaySongs: (List<Song>, Int) -> Unit = { _, _ -> },
     canPlay: Boolean = false,
-    onPlayNext: (com.vinyl.shared.database.Song) -> Unit = {},
-    onAddToQueue: (com.vinyl.shared.database.Song) -> Unit = {},
+    onPlayNext: (Song) -> Unit = {},
+    onAddToQueue: (Song) -> Unit = {},
+    findArtworkColors: suspend (ArtworkRequest) -> ArtworkColors? = { null },
 ) {
+    var mode by rememberSaveable { mutableStateOf("albums") }
+    var descending by rememberSaveable { mutableStateOf(false) }
+    var artistId by rememberSaveable { mutableStateOf<String?>(null) }
+    val sortedAlbums = remember(uiState.albums, descending) { if (descending) uiState.albums.reversed() else uiState.albums }
+    val sortedSongs = remember(uiState.allSongs, descending) { if (descending) uiState.allSongs.reversed() else uiState.allSongs }
+    val artists = remember(uiState.allSongs, descending) {
+        val grouped = uiState.allSongs.groupBy { it.artistId }.values.sortedBy { it.first().artistNorm }
+        if (descending) grouped.reversed() else grouped
+    }
+    BackHandler(artistId != null) { artistId = null }
     val selectedAlbum = uiState.albums.find { it.albumId == uiState.selectedAlbumId }
     Column(
         modifier = Modifier.fillMaxSize().padding(horizontal = 24.dp, vertical = 12.dp),
@@ -102,6 +117,7 @@ internal fun AlbumsScreen(
     ) {
         Text(selectedAlbum?.title ?: stringResource(R.string.library_title), style = MaterialTheme.typography.headlineLarge)
         if (!uiState.hasPermission) {
+            Text(stringResource(R.string.library_welcome))
             Text(stringResource(R.string.library_permission))
             Button(onClick = onRequestPermission) { Text(stringResource(R.string.library_grant_permission)) }
             TextButton(onClick = onOpenSettings) { Text(stringResource(R.string.library_open_settings)) }
@@ -132,58 +148,89 @@ internal fun AlbumsScreen(
                 Text(stringResource(R.string.library_empty))
             }
             if (uiState.selectedAlbumId == null) {
-                LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    items(uiState.albums, key = { it.albumId }) { album ->
-                        AlbumRow(album, onAlbumClick)
-                    }
+                Row {
+                    TextButton(onClick = { mode = "albums"; artistId = null }) { Text(stringResource(R.string.library_albums)) }
+                    TextButton(onClick = { mode = "songs"; artistId = null }) { Text(stringResource(R.string.library_songs)) }
+                    TextButton(onClick = { mode = "artists"; artistId = null }) { Text(stringResource(R.string.library_artists)) }
                 }
-            } else {
-                LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    if (uiState.songs.isEmpty()) {
-                        item { Text(stringResource(R.string.library_album_empty)) }
+                TextButton(onClick = { descending = !descending }) {
+                    Text(stringResource(if (descending) R.string.library_sort_desc else R.string.library_sort_asc))
+                }
+                when (mode) {
+                    "albums" -> LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        items(sortedAlbums, key = { it.albumId }) { album -> AlbumRow(album, onAlbumClick, findArtworkColors) }
                     }
-                    items(uiState.songs, key = { it.contentUri }) { song ->
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Column(Modifier.weight(1f).clickable(enabled = canPlay) { onPlaySongs(uiState.songs, uiState.songs.indexOf(song)) }.padding(vertical = 8.dp)) {
-                                Text(song.title, style = MaterialTheme.typography.titleMedium)
-                                Text("${song.artist} · ${formatDuration(song.durationMs)}")
+                    "songs" -> LibrarySongs(sortedSongs, canPlay, onPlaySongs, onPlayNext, onAddToQueue)
+                    else -> {
+                        val artistSongs = remember(sortedSongs, artistId) { sortedSongs.filter { it.artistId == artistId } }
+                        if (artistId == null) LazyColumn {
+                            items(artists, key = { it.first().artistId }) { songs ->
+                                ListItem(headlineContent = { Text(songs.first().artist) },
+                                    supportingContent = { Text(pluralStringResource(R.plurals.library_song_count, songs.size, songs.size)) },
+                                    modifier = Modifier.clickable { artistId = songs.first().artistId })
                             }
-                            var menuExpanded by remember { mutableStateOf(false) }
-                            Box {
-                                TextButton(onClick = { menuExpanded = true }, enabled = canPlay) { Text(stringResource(R.string.queue_actions)) }
-                                DropdownMenu(expanded = menuExpanded, onDismissRequest = { menuExpanded = false }) {
-                                    DropdownMenuItem(text = { Text(stringResource(R.string.queue_play_next)) }, onClick = { menuExpanded = false; onPlayNext(song) })
-                                    DropdownMenuItem(text = { Text(stringResource(R.string.queue_add)) }, onClick = { menuExpanded = false; onAddToQueue(song) })
-                                }
-                            }
+                        } else {
+                            TextButton(onClick = { artistId = null }) { Text(stringResource(R.string.queue_back)) }
+                            LibrarySongs(artistSongs, canPlay, onPlaySongs, onPlayNext, onAddToQueue)
                         }
                     }
                 }
+            } else {
+                if (uiState.songs.isEmpty()) Text(stringResource(R.string.library_album_empty))
+                LibrarySongs(uiState.songs, canPlay, onPlaySongs, onPlayNext, onAddToQueue)
             }
         }
     }
 }
 
 @Composable
-private fun AlbumRow(album: AlbumSummary, onAlbumClick: (String) -> Unit) {
-    Row(
-        Modifier.fillMaxWidth().clickable { onAlbumClick(album.albumId) }.padding(vertical = 8.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Box(Modifier.size(64.dp), contentAlignment = Alignment.Center) {
-            Text("♫", style = MaterialTheme.typography.headlineLarge)
-            AsyncImage(
-                model = ArtworkRequest(album.artworkUri, album.artworkVersion, album.relativePath, album.volumeName),
-                contentDescription = null,
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop,
-            )
+private fun AlbumRow(album: AlbumSummary, onAlbumClick: (String) -> Unit, findArtworkColors: suspend (ArtworkRequest) -> ArtworkColors?) {
+    val request = remember(album) { ArtworkRequest(album.artworkUri, album.artworkVersion, album.relativePath, album.volumeName) }
+    val colors by produceState<ArtworkColors?>(null, request) { value = findArtworkColors(request) }
+    Surface(color = colors?.let { Color(it.background) } ?: MaterialTheme.colorScheme.surface,
+        contentColor = colors?.let { Color(it.foreground) } ?: MaterialTheme.colorScheme.onSurface) {
+        Row(
+            Modifier.fillMaxWidth().clickable { onAlbumClick(album.albumId) }.padding(vertical = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Box(Modifier.size(64.dp), contentAlignment = Alignment.Center) {
+                Text("♫", style = MaterialTheme.typography.headlineLarge)
+                AsyncImage(
+                    model = ArtworkRequest(album.artworkUri, album.artworkVersion, album.relativePath, album.volumeName),
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop,
+                )
+            }
+            Column {
+                Text(album.title, maxLines = 2, overflow = TextOverflow.Ellipsis, style = MaterialTheme.typography.titleMedium)
+                Text(album.artist, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                Text(pluralStringResource(R.plurals.library_song_count, album.songCount, album.songCount))
+            }
         }
-        Column {
-            Text(album.title, maxLines = 2, overflow = TextOverflow.Ellipsis, style = MaterialTheme.typography.titleMedium)
-            Text(album.artist, maxLines = 1, overflow = TextOverflow.Ellipsis)
-            Text(pluralStringResource(R.plurals.library_song_count, album.songCount, album.songCount))
+    }
+}
+
+@Composable
+private fun LibrarySongs(songs: List<Song>, canPlay: Boolean, onPlaySongs: (List<Song>, Int) -> Unit,
+    onPlayNext: (Song) -> Unit, onAddToQueue: (Song) -> Unit) {
+    LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        itemsIndexed(songs, key = { _, song -> song.contentUri }) { index, song ->
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Column(Modifier.weight(1f).clickable(enabled = canPlay) { onPlaySongs(songs, index) }.padding(vertical = 8.dp)) {
+                    Text(song.title, style = MaterialTheme.typography.titleMedium)
+                    Text("${song.artist} · ${formatDuration(song.durationMs)}")
+                }
+                var expanded by remember { mutableStateOf(false) }
+                Box {
+                    TextButton(onClick = { expanded = true }, enabled = canPlay) { Text(stringResource(R.string.queue_actions)) }
+                    DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                        DropdownMenuItem(text = { Text(stringResource(R.string.queue_play_next)) }, onClick = { expanded = false; onPlayNext(song) })
+                        DropdownMenuItem(text = { Text(stringResource(R.string.queue_add)) }, onClick = { expanded = false; onAddToQueue(song) })
+                    }
+                }
+            }
         }
     }
 }

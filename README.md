@@ -1,6 +1,6 @@
 # Vinyl
 
-App nghe nhạc offline, Kotlin + Jetpack Compose. B1 có quyền đọc nhạc, quét MediaStore vào Room, danh sách album và chi tiết bài hát. Theme theo hệ thống, ba tab từ B0. B2/B3 có player nền, queue, fade, lịch sử và resume; B4 có playlist MVP.
+App nghe nhạc offline, Kotlin + Jetpack Compose. Base B0–B5 có thư viện Album/Bài hát/Nghệ sĩ, player nền/queue/fade/resume, playlist, tìm kiếm không dấu Settings lưu theme và màn Lịch sử nghe. Dữ liệu lưu trên thiết bị; không cần tài khoản/API key.
 
 ## Mở và chạy
 
@@ -9,7 +9,7 @@ Hướng dẫn thống nhất cho mọi thành viên: [Setup Vinyl](docs/SETUP.m
 1. Clone repo và mở thư mục gốc trong Android Studio Narwhal 4 (2025.1.4) hoặc mới hơn; Rabbit 2 dùng được.
 2. Gradle Daemon dùng chung **JetBrains JDK 21**, được ghim trong `gradle/gradle-daemon-jvm.properties`. Android Studio và terminal dùng cùng tiêu chí này; Gradle tự tìm JDK phù hợp hoặc tải từ URL đã lưu nếu máy chưa có. Lần đầu cần Internet; không cần cùng đường dẫn cài JDK giữa các máy.
 3. Cài Android SDK Platform 36 qua SDK Manager, chờ Gradle sync.
-4. Device Manager → tạo/chọn emulator API 26 trở lên, chọn cấu hình `app` → **Run**. App mở tab **Thư viện**; có thể chuyển sang **Playlist** và **Cài đặt**.
+4. Device Manager → tạo/chọn emulator API 26 trở lên, chọn cấu hình `app` → **Run**. App mở tab **Thư viện**; có thể chuyển sang **Tìm kiếm**, **Playlist** và **Cài đặt**.
 
 Clone vào thư mục local ngoài OneDrive. Teammate có thể dùng đường dẫn riêng, không cần sửa file build. Android Studio tự tạo `local.properties` theo SDK của từng máy; không commit file này.
 
@@ -32,6 +32,7 @@ macOS/Linux dùng `bash ./gradlew` với các task tương tự. Wrapper tự t�
 - [Bàn giao B2 / L2](docs/b2/README.md): player nền, mini player, API queue và kết quả kiểm tra.
 - [Bàn giao B3](docs/b3/README.md): fade, lịch sử nghe, snapshot/resume và migration v2.
 - [Bàn giao B4 / L3](docs/b4/README.md): playlist thật, thứ tự/occurrence, migration v3 và pattern ghi dữ liệu.
+- [Bàn giao B5](docs/b5/README.md): Search, Settings/theme, History, Palette và luồng MVP.
 - [Kế hoạch scaffold MVP](docs/MVP_SCAFFOLD_PLAN.md): milestone B0–B5, cấu trúc và convention.
 - [AGENTS.md](AGENTS.md): quy tắc cho AI và teammate.
 - [PLANNING.md](PLANNING.md): yêu cầu sản phẩm; quyết định cấu trúc và cách triển khai base theo kế hoạch scaffold.

@@ -1,6 +1,7 @@
 package com.vinyl.shared.database
 
 import androidx.room.*
+import kotlinx.coroutines.flow.Flow
 
 @Entity(tableName = "playback_snapshot")
 internal data class PlaybackSnapshot(
@@ -30,6 +31,12 @@ internal data class PlayEvent(
     val listenedMs: Long,
 )
 
+internal data class HistoryEntry(
+    @Embedded val event: PlayEvent,
+    val title: String?,
+    val artist: String?,
+)
+
 internal data class SavedPlayback(val snapshot: PlaybackSnapshot, val queue: List<PlaybackQueueItem>)
 
 @Dao
@@ -40,6 +47,11 @@ internal abstract class PlaybackDao {
     abstract suspend fun getQueue(): List<PlaybackQueueItem>
     @Query("SELECT * FROM play_events ORDER BY startedAtMs, id")
     abstract suspend fun getPlayEvents(): List<PlayEvent>
+
+    @Query("""SELECT e.*, s.title, s.artist FROM play_events e
+        LEFT JOIN songs s ON s.contentUri = e.mediaId
+        WHERE e.listenedMs > 0 ORDER BY e.startedAtMs DESC, e.id DESC LIMIT :limit""")
+    abstract fun observeHistory(limit: Int): Flow<List<HistoryEntry>>
 
     @Transaction
     open suspend fun findPlayback(): SavedPlayback? {

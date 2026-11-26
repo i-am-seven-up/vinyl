@@ -24,6 +24,7 @@ internal class AlbumsViewModel(
     val uiState = mutableUiState.asStateFlow()
     private var scanJob: Job? = null
     private var albumsJob: Job? = null
+    private var libraryJob: Job? = null
     private var songsJob: Job? = null
     private var hasScanned = false
 
@@ -32,6 +33,14 @@ internal class AlbumsViewModel(
     }
 
     private fun subscribeToLibrary() {
+        if (libraryJob?.isActive != true) libraryJob = viewModelScope.launch {
+            try {
+                repository.observeSongs().collect { songs -> mutableUiState.update { it.copy(allSongs = songs) } }
+            } catch (error: Exception) {
+                if (error is CancellationException) throw error
+                mutableUiState.update { it.copy(error = LibraryError.LOAD) }
+            }
+        }
         if (albumsJob?.isActive != true) albumsJob = viewModelScope.launch {
             try {
                 repository.observeAlbums().collect { albums ->
@@ -102,6 +111,7 @@ internal data class AlbumsUiState(
     val hasPermission: Boolean = false,
     val albums: List<AlbumSummary> = emptyList(),
     val selectedAlbumId: String? = null,
+    val allSongs: List<Song> = emptyList(),
     val songs: List<Song> = emptyList(),
     val error: LibraryError? = null,
 )
