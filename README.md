@@ -1,6 +1,6 @@
 # Vinyl
 
-App nghe nhạc offline, Kotlin + Jetpack Compose. B1 có quyền đọc nhạc, quét MediaStore vào Room, danh sách album và chi tiết bài hát. Theme theo hệ thống, ba tab từ B0. Playback bắt đầu ở B2.
+App nghe nhạc offline, Kotlin + Jetpack Compose. B1 có quyền đọc nhạc, quét MediaStore vào Room, danh sách album và chi tiết bài hát. Theme theo hệ thống, ba tab từ B0. B2/B3 có player nền, queue, fade, lịch sử và resume; B4 có playlist MVP.
 
 ## Mở và chạy
 
@@ -31,6 +31,7 @@ macOS/Linux dùng `bash ./gradlew` với các task tương tự. Wrapper tự t�
 - [Bàn giao B1 / L1](docs/b1/README.md): thư viện thật, API mẫu, bộ nhạc tổng hợp và kết quả kiểm tra.
 - [Bàn giao B2 / L2](docs/b2/README.md): player nền, mini player, API queue và kết quả kiểm tra.
 - [Bàn giao B3](docs/b3/README.md): fade, lịch sử nghe, snapshot/resume và migration v2.
+- [Bàn giao B4 / L3](docs/b4/README.md): playlist thật, thứ tự/occurrence, migration v3 và pattern ghi dữ liệu.
 - [Kế hoạch scaffold MVP](docs/MVP_SCAFFOLD_PLAN.md): milestone B0–B5, cấu trúc và convention.
 - [AGENTS.md](AGENTS.md): quy tắc cho AI và teammate.
 - [PLANNING.md](PLANNING.md): yêu cầu sản phẩm; quyết định cấu trúc và cách triển khai base theo kế hoạch scaffold.

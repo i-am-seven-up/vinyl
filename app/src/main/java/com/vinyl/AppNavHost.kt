@@ -24,7 +24,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.vinyl.library.AlbumsRoute
-import com.vinyl.playlist.PlaylistsScreen
+import com.vinyl.playlist.PlaylistsRoute
 import com.vinyl.settings.SettingsScreen
 
 private enum class AppDestination(val route: String, val titleRes: Int, val symbol: String) {
@@ -34,7 +34,7 @@ private enum class AppDestination(val route: String, val titleRes: Int, val symb
 }
 
 @Composable
-internal fun AppNavHost(albumsViewModelFactory: ViewModelProvider.Factory, nowPlayingViewModelFactory: ViewModelProvider.Factory) {
+internal fun AppNavHost(albumsViewModelFactory: ViewModelProvider.Factory, nowPlayingViewModelFactory: ViewModelProvider.Factory, playlistsViewModelFactory: ViewModelProvider.Factory) {
     val player: NowPlayingViewModel = viewModel(factory = nowPlayingViewModelFactory)
     val playback by player.uiState.collectAsStateWithLifecycle()
     PlayerPositionEffect(player)
@@ -81,7 +81,7 @@ internal fun AppNavHost(albumsViewModelFactory: ViewModelProvider.Factory, nowPl
             composable("nowPlaying") {
                 NowPlayingScreen(playback, player::playPause, player::next, player::previous, player::seekTo, player::setRepeatMode, player::setShuffle, { navController.popBackStack() }, { navController.navigate("queue") { launchSingleTop = true } })
             }
-            composable(AppDestination.PLAYLISTS.route) { PlaylistsScreen() }
+            composable(AppDestination.PLAYLISTS.route) { PlaylistsRoute(playlistsViewModelFactory, playback.isConnected, player::playSongs) }
             composable(AppDestination.SETTINGS.route) { SettingsScreen() }
         }
     }

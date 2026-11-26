@@ -18,7 +18,7 @@ internal class PlaybackDaoDeviceTest {
             legacy.execSQL("INSERT INTO songs VALUES ('content://song/1','album','artist','Title','Artist','Album','title','artist','album',31000,1,0,NULL,'external')")
             legacy.version = 1
         } finally { legacy.close() }
-        val database = Room.databaseBuilder(context, VinylDatabase::class.java, name).addMigrations(MIGRATION_1_2).build()
+        val database = Room.databaseBuilder(context, VinylDatabase::class.java, name).addMigrations(MIGRATION_1_2, MIGRATION_2_3).build()
         try {
             assertEquals("Title", database.songDao().getSongs().single().title)
             val dao = database.playbackDao()

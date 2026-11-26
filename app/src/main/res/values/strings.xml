@@ -17,7 +17,6 @@
     <plurals name="library_song_count">
         <item quantity="other">%1$d bài hát</item>
     </plurals>
-    <string name="playlists_scaffold_notice">Đang xây dựng · Quản lý playlist sẽ có ở B4.</string>
     <string name="settings_scaffold_notice">Đang xây dựng · Theme hiện theo hệ thống. Tùy chọn theme và quét lại sẽ có ở B5.</string>
     <string name="queue_title">Hàng đợi</string>
     <string name="queue_empty">Hàng đợi trống. Thêm bài từ thư viện.</string>
@@ -29,4 +28,27 @@
     <string name="queue_play_next">Phát tiếp theo</string>
     <string name="queue_add">Thêm vào hàng đợi</string>
     <string name="queue_order">Thứ tự danh sách; khi bật ngẫu nhiên, thứ tự phát có thể khác.</string>
+    <string name="playlist_retry">Thử lại</string>
+    <string name="playlist_close">Đóng</string>
+    <string name="playlist_create">Tạo playlist</string>
+    <string name="playlist_empty">Chưa có playlist. Tạo playlist để thêm nhạc từ thư viện.</string>
+    <string name="playlist_back">Quay lại</string>
+    <string name="playlist_rename">Đổi tên</string>
+    <string name="playlist_delete">Xóa playlist</string>
+    <string name="playlist_missing">Playlist không còn tồn tại.</string>
+    <string name="playlist_add">Thêm bài</string>
+    <string name="playlist_play">Phát tất cả</string>
+    <string name="playlist_empty_songs">Playlist trống. Bài bị xóa khỏi thư viện sẽ được bỏ khỏi playlist sau khi quét lại.</string>
+    <string name="playlist_up">Lên</string>
+    <string name="playlist_down">Xuống</string>
+    <string name="playlist_remove">Bỏ bài</string>
+    <string name="playlist_delete_title">Xóa playlist?</string>
+    <string name="playlist_confirm_delete">Xóa</string>
+    <string name="playlist_cancel">Hủy</string>
+    <string name="playlist_picker">Thêm bài từ thư viện</string>
+    <string name="playlist_library_empty">Chưa có bài hát. Hãy cấp quyền và quét nhạc ở Thư viện.</string>
+    <string name="playlist_rename_title">Đổi tên playlist</string>
+    <string name="playlist_name">Tên playlist</string>
+    <string name="playlist_save">Lưu</string>
+    <string name="playlist_delete_message">Xóa “%1$s”? File nhạc vẫn được giữ trên máy.</string>
 </resources>

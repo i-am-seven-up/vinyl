@@ -14,7 +14,7 @@ class MainActivity : ComponentActivity() {
         val appContainer = (application as VinylApplication).appContainer
         setContent {
             VinylTheme {
-                AppNavHost(appContainer.albumsViewModelFactory, appContainer.nowPlayingViewModelFactory)
+                AppNavHost(appContainer.albumsViewModelFactory, appContainer.nowPlayingViewModelFactory, appContainer.playlistsViewModelFactory)
             }
         }
     }
